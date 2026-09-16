@@ -42,9 +42,9 @@ the first step is taken.
 
 Every procedure step is labeled with its verification level
 (`Verified in code`, `Verified in configuration`, `Historical
-procedure`, or `Unverified on hardware`); see Safety Principles under
-[Safety and Prerequisites](../safety/index.md) for what each label
-means. A small number of historical screenshots
+procedure`, or `Unverified on hardware`); see [Safety
+Principles](../safety/safety-principles.md#verification-levels) for
+what each label means. A small number of historical screenshots
 from the previous ALeRT tutorial are used where they still illustrate a
 current interface; each is marked `Historical interface`.
 

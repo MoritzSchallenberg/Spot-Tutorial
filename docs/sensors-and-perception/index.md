@@ -25,8 +25,7 @@ where this fits in the full Spot pipeline.
 ## Prerequisites
 
 [ROS 2](../ros2/index.md) topics and messages; ROS 2 fundamentals are
-covered under Required Knowledge in
-[Safety and Prerequisites](../safety/index.md).
+covered under [Required Knowledge](../safety/required-knowledge.md).
 
 ## How it works
 

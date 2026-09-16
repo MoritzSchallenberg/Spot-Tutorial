@@ -97,7 +97,7 @@ verification status:
 Safety and Operating pages use a separate, plain-text verification
 label per procedure step (`Verified in code`, `Verified in
 configuration`, `Historical procedure`, `Unverified on hardware`) —
-see Safety Principles under [Safety and Prerequisites](safety/index.md).
+see [Safety Principles](safety/safety-principles.md#verification-levels).
 
 This site runs on one fixed toolchain — Ubuntu 22.04 LTS and ROS 2
 Humble — unless a specific ALeRT repository is documented to need

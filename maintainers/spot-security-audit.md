@@ -28,6 +28,7 @@ code, playbook, launch file, or deployment script was executed.
 | TLS test certificates (`.pem`/`.crt`) | `workspaces/spot_ws/src/spot_ros2/spot_wrapper/spot_wrapper/testing/credentials/` | Identified as vendored upstream unit-test fixtures for the `spot_ros2` driver's auth-flow tests (path and filenames indicate mock certs, not this team's real device secrets); not opened, not referenced |
 | SSH keys, GitHub CLI token, GPG keys, WiFi passwords | Explicitly stated as **excluded from the backup itself** by `Backup Ansible/docs/nicht_kopiert.md` | Nothing to find locally; no action needed |
 | Unrelated operational note (not a secret, but security-relevant) | Boston Dynamics Spot software license recorded as expired 2024-08-24, per `Backup Ansible/README.md` | Noted here for the maintainers/robot owner; not published, as it is an account/licensing matter, not tutorial content |
+| Maintainers' own acknowledgement that a credential needs rotation | `Backup Ansible/scripts/restore.sh` ends with an operator reminder, verbatim in German: "BOSDYN-Passwort in .bashrc rotieren" ("rotate the BOSDYN password in .bashrc") | Confirms `configs/.bashrc`'s `BOSDYN_CLIENT_PASSWORD` is a live credential the team itself flagged as needing rotation; not reproduced here; recommend the robot owner actually rotate it, independent of this documentation task |
 
 ### B. Old Spot tutorial (`00-02 Quelle 2 Spot Tutorial`)
 

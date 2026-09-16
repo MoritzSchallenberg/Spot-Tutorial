@@ -25,19 +25,20 @@ implements these stop mechanisms, see
 
 ## Sections
 
-- **Safety Principles** — the different stop states (controlled stop,
-  software stop, motor/power-off, Spot E-stop, manipulator E-stop,
-  communication loss, system fault, physical hazard) and what is known
-  about each.
-- **Emergency Stops** — the physical E-stop controls, what they do, and
-  when to use them.
-- **Operating Area** — what the physical space around the robot must
-  provide before a session starts.
-- **Required Knowledge** — the background knowledge (ROS 2, Linux, this
-  site's own topics) a person needs before operating the system, and
-  where to get it.
-- **Operator Checklist** — a condensed, actionable checklist tying the
-  rest of this section together for use immediately before a session.
+- [Safety Principles](safety-principles.md) — the different stop states
+  (controlled stop, software stop, motor/power-off, Spot E-stop,
+  manipulator E-stop, communication loss, system fault, physical
+  hazard) and what is known about each.
+- [Emergency Stops](emergency-stops.md) — the physical E-stop controls,
+  what they do, and when to use them.
+- [Operating Area](operating-area.md) — what the physical space around
+  the robot must provide before a session starts.
+- [Required Knowledge](required-knowledge.md) — the background
+  knowledge (ROS 2, Linux, this site's own topics) a person needs
+  before operating the system, and where to get it.
+- [Operator Checklist](operator-checklist.md) — a condensed, actionable
+  checklist tying the rest of this section together for use immediately
+  before a session.
 
 ## Verification
 
@@ -58,6 +59,9 @@ to this section's principles.
 :hidden:
 :maxdepth: 1
 
-../getting-started/index
-../ros2/index
+safety-principles
+emergency-stops
+operating-area
+required-knowledge
+operator-checklist
 ```
