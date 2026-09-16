@@ -8,6 +8,15 @@ the real system — its safety procedures, its operating procedures, and
 its hardware and software architecture — grounded in the team's own
 code and configuration.
 
+:::{figure} _static/images/history/spot_gravel_sitting.jpg
+:alt: Boston Dynamics Spot seated on a gravel and rubble-like surface.
+:width: 60%
+:align: center
+
+Spot on gravel/rubble-like terrain, from the team's RoboCup Rescue
+League competition history — see [About ALeRT and Spot](about/index.md).
+:::
+
 :::{admonition} Safety notice
 :class: danger
 

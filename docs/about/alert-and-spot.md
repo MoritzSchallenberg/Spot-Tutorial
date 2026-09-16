@@ -19,6 +19,19 @@ ALeRT — the Aachen Legged Rescue Team — is a research group at the
 MASKOR Institute, affiliated with FH Aachen University of Applied
 Sciences.
 
+:::{figure} ../_static/images/history/award_ceremony.jpg
+:alt: The ALeRT team on stage at a RoboCup Rescue League award ceremony, holding a trophy.
+
+The ALeRT team at a RoboCup Rescue League award ceremony.
+:::
+
+:::{figure} ../_static/images/history/spot_gravel_sitting.jpg
+:alt: Boston Dynamics Spot seated on a gravel and rubble-like surface.
+
+Spot on a gravel/rubble-like surface, the kind of terrain the
+competition's maneuvering and mobility challenge tests.
+:::
+
 ## Origins: from Kobe to RoboCup Rescue
 
 The Kobe earthquake emphasized the importance of unmanned rescue
@@ -28,6 +41,13 @@ of academic research into the disaster-rescue domain, and to encourage
 research in a socially significant real-world domain by providing a
 platform for robotics teams from around the world to undertake rescue
 scenario operations.
+
+:::{figure} ../_static/images/history/rrl_eindhoven_group.png
+:alt: A RoboCup Rescue League group photograph from a past competition event.
+
+A RoboCup Rescue League group/event photograph, referenced alongside
+the tutorial's account of the league's origin.
+:::
 
 ## Team Description Paper
 
@@ -39,6 +59,13 @@ available here:
 [TDP-ALeRT (RRL2023_ALeRT_Germany.pdf)](https://maskor.fh-aachen.de/spot/_downloads/bec74a187ad4ae2fd6f35e6392c5a143/RRL2023_ALeRT_Germany.pdf).
 
 ## Videos
+
+:::{figure} ../_static/images/history/RRL_arena.png
+:alt: The RoboCup Rescue League competition arena.
+
+The RoboCup Rescue League competition arena, referenced in the team's
+course introduction material.
+:::
 
 The former tutorial linked the following videos documenting the
 competition and the team's Spot system. Links are preserved as
