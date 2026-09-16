@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""verify-structure.py -- static, source-level checks for the topic-based
-documentation structure introduced by Entwicklungsauftrag 8 (Fortsetzung
-8A). Replaces the earlier version of this script, which checked the
-eight-module/capstone structure from Entwicklungsauftrag 6 -- that
-structure no longer exists.
+"""verify-structure.py -- static, source-level checks for the ALeRT Spot
+Tutorial navigation structure introduced by Entwicklungsauftrag 9. Updated
+from the topic-based structure of Entwicklungsauftrag 8, which this script
+originally checked -- that structure's 13 topic directories still exist on
+disk (as "background directories", see BACKGROUND_DIRS below) but are no
+longer top-level navigation sections in their own right.
 
 Unlike verify-site.py, this needs no build, no server and no browser -- it
 reads the Markdown sources in docs/ directly. Run it any time with:
@@ -12,9 +13,11 @@ reads the Markdown sources in docs/ directly. Run it any time with:
 
 It checks:
 
- 1. exactly 13 public top-level topic directories exist, no more, no
-    fewer, and no docs/course/ or docs/prerequisites/ directory exists
-    (the pre-migration structure);
+ 1. exactly 11 public top-level "primary nav" directories exist (the
+    sections in Section 6 of the Entwicklungsauftrag 9 task), no more, no
+    fewer beyond the background directories they transitively reference,
+    and no docs/course/ or docs/prerequisites/ directory exists (the
+    pre-migration structure);
  2. every topic directory has an index.md;
  3. every topic's index.md is referenced from docs/index.md's own
     toctrees (the site's single navigation root);
@@ -80,21 +83,43 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DOCS = REPO_ROOT / "docs"
 
-TOPIC_DIRS = [
+# Entwicklungsauftrag 9 (ALeRT Spot Tutorial pivot) replaced the 13
+# independent topics with the Spot-oriented navigation from the task's
+# Section 6. PRIMARY_NAV_DIRS are the 11 sections with their own top-level
+# toctree caption in docs/index.md, in that order. BACKGROUND_DIRS are the
+# pre-existing topic directories kept at their original path (to avoid
+# rewriting the ~30 cross-references into docs/platforms/spot/index.md
+# alone) and reached transitively through a primary section's own toctree
+# instead of being a primary section themselves -- see
+# maintainers/spot-tutorial-migration-report.md for the exact mapping.
+PRIMARY_NAV_DIRS = [
+    "about",
+    "safety",
+    "operating",
+    "architecture",
+    "sensors-and-perception",
+    "navigation-and-mapping",
+    "manipulation",
+    "autonomous-behaviors",
+    "deployment-and-configuration",
+    "integration-testing",
+    "reference",
+]
+
+BACKGROUND_DIRS = [
     "getting-started",
     "ros2",
-    "platforms",
     "simulation",
+    "platforms",
     "sensors-frames",
     "perception",
     "mapping-world-models",
     "navigation-exploration",
-    "manipulation",
     "decision-making",
-    "integration-testing",
     "rescue-projects",
-    "reference",
 ]
+
+TOPIC_DIRS = PRIMARY_NAV_DIRS  # kept for check_topic_index_pages/root-toctree below
 
 REMOVED_DIRS = ["course", "prerequisites"]
 
@@ -158,14 +183,18 @@ def check_topic_directories() -> list[str]:
     for d in REMOVED_DIRS:
         if (DOCS / d).is_dir():
             failures.append(f"pre-migration directory still exists: docs/{d}/")
-    missing = [d for d in TOPIC_DIRS if d not in existing]
+    allowed = set(PRIMARY_NAV_DIRS) | set(BACKGROUND_DIRS)
+    missing = [d for d in PRIMARY_NAV_DIRS if d not in existing]
     for d in missing:
-        failures.append(f"expected topic directory missing: docs/{d}/")
-    unexpected = existing - set(TOPIC_DIRS) - set(REMOVED_DIRS)
+        failures.append(f"expected primary-nav directory missing: docs/{d}/")
+    unexpected = existing - allowed - set(REMOVED_DIRS)
     for d in sorted(unexpected):
-        failures.append(f"unexpected top-level directory under docs/: docs/{d}/ (not one of the 13 topics)")
-    if len(set(TOPIC_DIRS) & existing) != 13 and not missing:
-        failures.append(f"expected exactly 13 topic directories, found {len(set(TOPIC_DIRS) & existing)}")
+        failures.append(
+            f"unexpected top-level directory under docs/: docs/{d}/ "
+            "(not one of the 11 primary-nav sections or their background directories)"
+        )
+    if len(set(PRIMARY_NAV_DIRS) & existing) != 11 and not missing:
+        failures.append(f"expected exactly 11 primary-nav directories, found {len(set(PRIMARY_NAV_DIRS) & existing)}")
     return failures
 
 
@@ -384,7 +413,10 @@ def main() -> int:
         print(f"\n{len(all_failures)} failure(s)")
         return 1
 
-    print(f"All structural checks passed for {len(TOPIC_DIRS)} topic directories.")
+    print(
+        f"All structural checks passed for {len(PRIMARY_NAV_DIRS)} primary-nav "
+        f"sections ({len(BACKGROUND_DIRS)} background directories)."
+    )
     return 0
 
 

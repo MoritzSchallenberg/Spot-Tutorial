@@ -414,38 +414,28 @@ The ALeRT stack uses several approaches, covered generally in
 ## Operating the physical robot
 
 :::{danger}
-Do not operate Spot without supervision and training from the team. It is heavy,
-it moves fast, and an emergency stop drops it where it stands.
-
-There are separate E-stops for the robot and for the arm. Pressing one stops
-the motors immediately: Spot falls, and the manipulator stops and falls
-mid-action. Use them only when someone or something is genuinely about to be
-hurt — an unnecessary press means a full restart.
+Do not operate Spot without supervision and training from the team. It is
+heavy and moves fast. See [Safety and Prerequisites](../../safety/index.md)
+before approaching the physical robot.
 :::
 
-The general operating sequence, as documented by the team:
+The authoritative, code-grounded safety and operating documentation for the
+physical robot lives in two dedicated sections rather than on this
+simulation-focused page:
 
-1. Check that the robot and controller are charged, and that there is clear
-   space around the robot — Spot needs room to manoeuvre.
-2. Power on Spot and release the motor cut-off. Wait for the startup sequence.
-3. Power on the controller and connect to the team's operations network.
-4. Start the drivers, then enable the robot with the E-stop control in the
-   operator interface. A terminal should confirm the E-stop is found and the
-   driver started.
-5. Confirm the robot model, map and camera feeds appear in RViz.
-6. Control is enabled with a button combination on the controller; the team
-   maintains a control schematic.
-7. The manipulator has its own driver, started separately.
+- [Safety and Prerequisites](../../safety/index.md) — the different stop
+  states (controlled stop, software stop, motor/power-off, Spot E-stop,
+  manipulator E-stop, communication loss, system fault, physical hazard) and
+  what is actually known about each, instead of a single blanket claim about
+  what happens on any given stop.
+- [Operating Spot](../../operating/index.md) — the step-by-step power-on,
+  driving, manipulator, shutdown and recovery procedures, each labeled with
+  its verification level.
 
-To shut down: command Spot to sit, then hold the power button until the
-indicator goes out.
-
-:::{note}
-Exact button sequences, network names, device addresses and interface
-credentials are internal operating information and are not published on this
-public site. Get the current procedure and a hands-on briefing from the team
-before touching the robot.
-:::
+This page's own "Working through the site" and "Try it on Spot" tables below
+remain the reference for **mapping this site's general topics onto Spot**
+(which topic name corresponds to which Spot-specific topic, launch file, or
+exercise) — that mapping is unchanged by the safety/operating rewrite above.
 
 ## Working through the site
 

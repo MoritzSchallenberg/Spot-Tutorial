@@ -1,12 +1,12 @@
 # Configuration file for the Sphinx documentation builder.
 #
-# ALeRT Advanced Robotics Tutorial -- ALeRT (Aachen Legged Rescue Team),
+# ALeRT Spot Tutorial -- ALeRT (Aachen Legged Rescue Team),
 # MASKOR Institute, FH Aachen.
 # Full reference: https://www.sphinx-doc.org/en/master/usage/configuration.html
 
 # -- Project information -----------------------------------------------------
 
-project = "ALeRT Advanced Robotics Tutorial"
+project = "ALeRT Spot Tutorial"
 author = "ALeRT, MASKOR Institute, FH Aachen"
 copyright = "2026, ALeRT, MASKOR Institute, FH Aachen"
 version = "0.1"
@@ -115,7 +115,7 @@ myst_substitutions = {
 # -- Options for HTML output -------------------------------------------------
 
 html_theme = "sphinx_rtd_theme"
-html_title = "ALeRT Advanced Robotics Tutorial"
+html_title = "ALeRT Spot Tutorial"
 
 # Logo rights for the MASKOR / team logos found in the source material are not
 # established, so the site deliberately uses a text title instead of an image.

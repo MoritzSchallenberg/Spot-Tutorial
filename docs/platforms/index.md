@@ -1,5 +1,16 @@
 # ALeRT Platforms and Safety
 
+:::{admonition} Looking for safety or operating information?
+:class: note
+
+The site's authoritative safety and operating documentation for the
+physical robot now lives under [Safety and
+Prerequisites](../safety/index.md) and [Operating
+Spot](../operating/index.md). This page remains the platform/simulation
+reference — how this site's general topics map onto Spot's actual
+topics, launch files, and hardware-design tooling.
+:::
+
 ## What belongs to this topic
 
 The physical and simulated systems ALeRT actually builds and runs, and
