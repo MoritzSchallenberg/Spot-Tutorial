@@ -32,15 +32,17 @@ excluded as legacy or a different platform).
 - [Computers and Network](computers-and-network.md) — the compute
   roles involved and how they communicate, using role placeholders
   instead of real host or network identifiers.
-- **Software Components** — the ROS 2 packages and nodes that make up
-  the running system, organized by subsystem.
-- **Startup and Launch Sequence** — the order components come up in,
-  for each of the system's distinct operating modes.
-- **ROS 2 Interfaces** — the topics, services, and actions that connect
-  the software components.
-- **Coordinate Frames** — the TF frame tree the system maintains.
-- **Data Flow** — how data moves from sensors, through processing, to
-  actions.
+- [Software Components](software-components.md) — the ROS 2 packages
+  and nodes that make up the running system, organized by subsystem.
+- [Startup and Launch Sequence](startup-and-launch-sequence.md) — the
+  order components come up in, for each of the system's distinct
+  operating modes.
+- [ROS 2 Interfaces](ros2-interfaces.md) — the topics, services, and
+  actions that connect the software components.
+- [Coordinate Frames](coordinate-frames.md) — the TF frame tree the
+  system maintains.
+- [Data Flow](data-flow.md) — how data moves from sensors, through
+  processing, to actions.
 
 ## Verification
 
@@ -60,4 +62,9 @@ run it.
 
 hardware-overview
 computers-and-network
+software-components
+startup-and-launch-sequence
+ros2-interfaces
+coordinate-frames
+data-flow
 ```

@@ -19,9 +19,9 @@ Mapping and localization sit between perception (sensor data placed in
 TF frames) and navigation (planners and controllers that consume a map
 and a pose). On the real Spot system, the currently active navigation
 stack builds on `move_base_flex` with Octomap-derived 3D/2D
-representations — see Software Components under [System
-Architecture](../architecture/index.md) for the concrete package names
-and evidence.
+representations — see [Software
+Components](../architecture/software-components.md) for the concrete
+package names and evidence.
 
 ## Prerequisites
 

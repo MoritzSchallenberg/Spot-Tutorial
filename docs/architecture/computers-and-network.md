@@ -89,8 +89,8 @@ evidence does not resolve which is actually live:
   Fast-DDS client XML profile in the configuration.
 
 `Verified in configuration` for both existing; `Unverified` for which
-is the actual live choice at any given time — see Software Components,
-later in this section, and the open questions in `spot-code-audit.md`
+is the actual live choice at any given time — see [Software Components](software-components.md), and the
+open questions in `spot-code-audit.md`
 (internal).
 
 ## What happens on connection loss
@@ -105,5 +105,6 @@ identifiers are published, consistent with `spot-security-audit.md`.
 
 ## Related components
 
-[Hardware Overview](hardware-overview.md), Software Components
-(later in this section), [Safety and Prerequisites](../safety/index.md).
+[Hardware Overview](hardware-overview.md), [Software
+Components](software-components.md), [Safety and
+Prerequisites](../safety/index.md).

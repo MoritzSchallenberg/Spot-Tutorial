@@ -19,8 +19,8 @@ is done with that data once published
 Sensor data flows from drivers into TF-aware consumers (RViz, mapping,
 navigation) and into perception nodes (object detection, marker
 detection) whose output in turn feeds navigation and manipulation. See
-Data Flow under [System Architecture](../architecture/index.md) for
-where this fits in the full Spot pipeline.
+[Data Flow](../architecture/data-flow.md) for where this fits in the
+full Spot pipeline.
 
 ## Prerequisites
 

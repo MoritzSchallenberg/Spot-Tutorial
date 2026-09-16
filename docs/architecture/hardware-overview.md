@@ -62,7 +62,7 @@ line launching `kortex_bringup gen3.launch.py ... dof:=6`;
 
 Software: `man_ws/src/ros2_kortex` (`kortex_driver`), MoveIt 2 config
 in `spot_gen3_moveit`. See [Manipulator and MoveIt](../manipulation/index.md)
-and Software Components, later in this section.
+and [Software Components](software-components.md).
 
 ### Gripper
 
@@ -76,7 +76,7 @@ names a joint `robotiq_85_left_knuckle_joint` (consistent with a
 2F-85). This documentation does not assert one model over the other —
 confirm the physical gripper model directly. This is also tied to the
 open question of which gripper-control path is active, covered under
-Software Components, later in this section.
+[Software Components](software-components.md).
 
 `Verified in code` for both naming conventions existing; `Unverified`
 for which is correct.
@@ -151,5 +151,5 @@ Spot](../operating/index.md).
 
 ## Related components
 
-[Computers and Network](computers-and-network.md), and Software
-Components, later in this section.
+[Computers and Network](computers-and-network.md), and [Software
+Components](software-components.md).
