@@ -81,4 +81,4 @@ locations and behavior.
 ## Related components
 
 [Safety Principles](safety-principles.md), [Operating Area](operating-area.md),
-and Recovery and Troubleshooting under [Operating Spot](../operating/index.md).
+and [Recovery and Troubleshooting](../operating/recovery-and-troubleshooting.md).

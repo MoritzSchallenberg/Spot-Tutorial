@@ -36,17 +36,17 @@ than re-reading the full section each time.
 
 ## During the session
 
-- [ ] Confirm the driver reports the E-stop endpoint present
-      ("Found estop!" in the driver's log — see System Preparation
-      under [Operating Spot](../operating/index.md)) before issuing any
-      motion command.
+- [ ] Confirm the driver reports the E-stop endpoint present ("Found
+      estop!" in the driver's log — see [Power-On
+      Procedure](../operating/power-on.md)) before issuing any motion
+      command.
 - [ ] Keep the abort condition for the current step in mind — see the
       relevant [Operating Spot](../operating/index.md) procedure.
 
 ## After the session
 
-- [ ] Follow Safe Shutdown under [Operating Spot](../operating/index.md)
-      rather than simply disconnecting power.
+- [ ] Follow [Safe Shutdown](../operating/safe-shutdown.md) rather than
+      simply disconnecting power.
 
 ## Verification
 

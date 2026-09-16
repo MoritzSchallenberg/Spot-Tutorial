@@ -23,20 +23,21 @@ the first step is taken.
 
 ## Sections
 
-- **System Preparation** — checking the robot, batteries, and workspace
-  before power-on.
-- **Power-On Procedure** — bringing up Spot, the operator device, and
-  the base software.
-- **Operator Interface** — what the operator sees and controls once the
-  system is running.
-- **Driving Spot** — manual driving and switching between operating
-  modes.
-- **Operating the Manipulator** — enabling and manually controlling the
-  arm and gripper.
-- **Safe Shutdown** — returning the system to a stable, powered-down
-  state.
-- **Recovery and Troubleshooting** — what to do after an interrupted
-  startup, a communication loss, or a manipulator fault.
+- [System Preparation](system-preparation.md) — checking the robot,
+  batteries, and workspace before power-on.
+- [Power-On Procedure](power-on.md) — bringing up Spot, the operator
+  device, and the base software.
+- [Operator Interface](operator-interface.md) — what the operator sees
+  and controls once the system is running.
+- [Driving Spot](driving-spot.md) — manual driving and switching
+  between operating modes.
+- [Operating the Manipulator](operating-the-manipulator.md) — enabling
+  and manually controlling the arm and gripper.
+- [Safe Shutdown](safe-shutdown.md) — returning the system to a
+  stable, powered-down state.
+- [Recovery and Troubleshooting](recovery-and-troubleshooting.md) —
+  what to do after an interrupted startup, a communication loss, or a
+  manipulator fault.
 
 ## Verification
 
@@ -50,10 +51,23 @@ current interface; each is marked `Historical interface`.
 
 ## Failure modes
 
-See **Recovery and Troubleshooting** for known failure situations and
-their recovery steps.
+See [Recovery and Troubleshooting](recovery-and-troubleshooting.md) for
+known failure situations and their recovery steps.
 
 ## Related components
 
 [System Architecture](../architecture/index.md) documents the software
 these procedures start and interact with.
+
+```{toctree}
+:hidden:
+:maxdepth: 1
+
+system-preparation
+power-on
+operator-interface
+driving-spot
+operating-the-manipulator
+safe-shutdown
+recovery-and-troubleshooting
+```

@@ -77,6 +77,25 @@ recorded in `/tmp/history-image-checksums.csv` at migration time (not
 committed — regenerate with `sha256sum` against the paths above if
 re-verification is needed).
 
+## Historical interface screenshots (Section 9.3)
+
+Four operating-interface screenshots requested by Section 9.3, from
+`Spot Documentation/08 Spot Startup/..._files/`, migrated into
+`docs/_static/images/historical-interface/`, checksums verified equal:
+
+| File | Checksum equal | Visually reviewed | Disposition |
+| --- | --- | --- | --- |
+| `spot_buttons.jpg` | Yes | Yes — a labeled photo of the power/motor-cutoff button panel, no sensitive content | Kept, labeled `Historical interface`, used in `operating/power-on.md` |
+| `rviz.png` | Yes | Yes — RViz + rqt dashboard; tab labels ("BASIC/PLUS/BW/EXP/NAV"), the "Estop" slider, and the "Start" button visible in the screenshot match literal strings in the current `spot_estop_rqt.py` source; no sensitive content | Kept, labeled `Historical interface`, used in `operating/operator-interface.md` |
+| `spot_control.png` | Yes | Yes — a Steam Deck control schematic; describes Steam Deck native controls, which do not match the DualSense mapping found in the current teleop code | Kept, labeled `Historical interface`, explicit mismatch noted in `operating/driving-spot.md` |
+| `manipulator_control.png` | Yes | Yes — a Steam Deck manipulator-control schematic; same mismatch as above | Kept, labeled `Historical interface`, explicit mismatch noted in `operating/operating-the-manipulator.md` |
+
+Per Section 9.3, three other screenshots from the same source
+directory — `wifi.png`, `kinova_web.png`, `kinova_faults.png` — were
+excluded entirely rather than labeled, because they show real network
+information (see "Excluded images" below and `spot-security-audit.md`),
+not because their depicted interface is out of date.
+
 ## Excluded images
 
 | Original file | Category | Reason excluded |

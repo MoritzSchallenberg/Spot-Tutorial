@@ -47,9 +47,9 @@ page itself is asserted as hardware-verified.
 ## Failure modes
 
 A mission behavior's failure handling is only as good as the recovery
-behavior of the steps it calls — see Recovery and Troubleshooting under
-[Operating Spot](../operating/index.md) and each subpage's own
-failure-mode notes.
+behavior of the steps it calls — see [Recovery and
+Troubleshooting](../operating/recovery-and-troubleshooting.md) and each
+subpage's own failure-mode notes.
 
 ## Related components
 

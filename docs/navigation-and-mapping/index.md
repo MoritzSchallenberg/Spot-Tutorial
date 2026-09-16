@@ -46,7 +46,7 @@ this hub page itself makes a hardware claim.
 ## Failure modes
 
 See each subpage's own failure-mode/troubleshooting content, and
-Recovery and Troubleshooting under [Operating Spot](../operating/index.md)
+[Recovery and Troubleshooting](../operating/recovery-and-troubleshooting.md)
 for what to do when navigation stalls or the robot cannot reach a goal
 during an operating session.
 
