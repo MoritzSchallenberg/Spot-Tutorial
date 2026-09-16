@@ -38,10 +38,10 @@ longer than expected, does not put anyone or anything at risk.
   supervision, per [Safety Principles](safety-principles.md).
 - **No unrelated network traffic assumptions.** The system's software
   E-stop endpoint and driver communicate over the local network — see
-  Computers and Network under [System
-  Architecture](../architecture/index.md) for the (anonymized) roles
-  involved. A degraded network is a form of communication loss — see
-  [Safety Principles](safety-principles.md#communication-loss).
+  [Computers and Network](../architecture/computers-and-network.md)
+  for the (anonymized) roles involved. A degraded network is a form of
+  communication loss — see [Safety
+  Principles](safety-principles.md#communication-loss).
 
 ## Verification
 

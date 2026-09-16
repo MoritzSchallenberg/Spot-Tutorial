@@ -19,7 +19,12 @@ extensions = [
     "sphinx_copybutton",    # copy button on every code block
     "sphinx_design",        # cards, grids, dropdowns (used for solution blocks)
     "sphinx.ext.todo",
+    "sphinxcontrib.mermaid",  # architecture diagrams (Entwicklungsauftrag 9)
 ]
+
+# Pinned so a future sphinxcontrib-mermaid upgrade cannot silently change the
+# rendered diagram engine without a deliberate version bump here.
+mermaid_version = "11.12.1"
 
 # Content is authored in Markdown so that it stays easy to edit.
 source_suffix = {".md": "markdown", ".rst": "restructuredtext"}

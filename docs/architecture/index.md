@@ -26,12 +26,12 @@ excluded as legacy or a different platform).
 
 ## Sections
 
-- **Hardware Overview** — the physical components: Spot itself, the
-  Kinova Gen3 manipulator, the Robotiq gripper, sensors, and the
-  operator device.
-- **Computers and Network** — the compute roles involved and how they
-  communicate, using role placeholders instead of real host or network
-  identifiers.
+- [Hardware Overview](hardware-overview.md) — the physical components:
+  Spot itself, the Kinova Gen3 manipulator, the gripper, sensors, and
+  the operator device.
+- [Computers and Network](computers-and-network.md) — the compute
+  roles involved and how they communicate, using role placeholders
+  instead of real host or network identifiers.
 - **Software Components** — the ROS 2 packages and nodes that make up
   the running system, organized by subsystem.
 - **Startup and Launch Sequence** — the order components come up in,
@@ -53,3 +53,11 @@ legibility in both light and dark mode.
 [Operating Spot](../operating/index.md) is the procedural counterpart —
 this section explains what the system is, that section explains how to
 run it.
+
+```{toctree}
+:hidden:
+:maxdepth: 1
+
+hardware-overview
+computers-and-network
+```
