@@ -23,13 +23,14 @@ code-grounded technical documentation.
 
 ## Sections
 
-- **ALeRT and Spot** — who ALeRT is and how the team's use of Spot
-  began.
-- **RoboCup Rescue** — the competition ALeRT's work is built around.
-- **Rescue Challenges** — the challenge categories the competition
-  tests.
-- **Historical Gallery** — photographs from past competitions and team
-  activity.
+- [ALeRT and Spot](alert-and-spot.md) — who ALeRT is and how the
+  team's use of Spot began.
+- [RoboCup Rescue](robocup-rescue.md) — the competition ALeRT's work is
+  built around.
+- [Rescue Challenges](rescue-challenges.md) — the challenge categories
+  the competition tests.
+- [Historical Gallery](historical-gallery.md) — photographs from past
+  competitions and team activity.
 
 :::{admonition} Historical snapshot
 :class: note
@@ -46,3 +47,13 @@ state of the competition or the team.
 
 [Safety and Prerequisites](../safety/index.md) is the next step for
 anyone preparing to work with the physical robot.
+
+```{toctree}
+:hidden:
+:maxdepth: 1
+
+alert-and-spot
+robocup-rescue
+rescue-challenges
+historical-gallery
+```
