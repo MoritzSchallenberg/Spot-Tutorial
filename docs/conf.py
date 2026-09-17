@@ -143,7 +143,7 @@ html_theme_options = {
 html_static_path = ["_static"]
 
 html_css_files = ["css/custom.css"]
-html_js_files = ["js/color-mode.js"]
+html_js_files = ["js/color-mode.js", "js/mermaid-after-decrypt.js"]
 
 # The site is served from a repository subpath on GitHub Pages
 # (https://<user>.github.io/Learning-Robotics-Crash-Course/). Sphinx emits
