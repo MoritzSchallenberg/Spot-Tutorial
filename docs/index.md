@@ -15,13 +15,15 @@ approaching the physical robot, and never move the real system without
 supervision from someone authorized to operate it.
 :::
 
-## What do you want to do?
+## Who are you?
 
 ::::{grid} 1 1 3 3
 :gutter: 3
 
 :::{grid-item}
-### I want to operate Spot
+### New Spot operator
+
+Preparing to operate the physical robot for the first time.
 
 - [Safety Principles](safety/safety-principles.md)
 - [Operator Checklist](safety/operator-checklist.md)
@@ -29,37 +31,49 @@ supervision from someone authorized to operate it.
 - [Power-On Procedure](operating/power-on.md)
 - [Driving Spot](operating/driving-spot.md)
 - [Safe Shutdown](operating/safe-shutdown.md)
+
+→ [Full operating manual](operating/index.md)
 :::
 
 :::{grid-item}
-### I want to understand the system
+### Spot software developer
 
+Writing or modifying ROS 2 code against this system.
+
+- [System Architecture](architecture/index.md)
 - [Hardware Overview](architecture/hardware-overview.md)
 - [Computers and Network](architecture/computers-and-network.md)
-- [Software Components](architecture/software-components.md)
-- [Startup and Launch Sequence](architecture/startup-and-launch-sequence.md)
 - [ROS 2 Interfaces](architecture/ros2-interfaces.md)
 - [Coordinate Frames](architecture/coordinate-frames.md)
 - [Data Flow](architecture/data-flow.md)
+
+→ [Full system architecture](architecture/index.md)
 :::
 
 :::{grid-item}
-### I want to develop for Spot
+### Troubleshooting a problem
 
-- [ROS 2](ros2/index.md)
-- [Sensors and Perception](sensors-and-perception/index.md)
-- [Navigation and Mapping](navigation-and-mapping/index.md)
-- [Manipulator and MoveIt](manipulation/index.md)
-- [Autonomous Behaviors](autonomous-behaviors/index.md)
-- [Diagnostics and Testing](integration-testing/index.md)
+Something in a running session is not working as expected.
+
+- [Recovery and Troubleshooting](operating/recovery-and-troubleshooting.md)
+- [System Status](reference/system-status.md)
+- [Startup and Launch Sequence](architecture/startup-and-launch-sequence.md)
+- [Operator Interface](operating/operator-interface.md)
+
+→ [Full troubleshooting decision path](operating/recovery-and-troubleshooting.md)
 :::
 
 ::::
 
 Not sure where to start, or want a guided order through one of these
-rather than a flat list? See [**Start Here**](start-here.md) for five
+rather than a flat list? See [**Start Here**](start-here.md) for
 concrete learning paths, each with its prerequisites, whether it needs
 real hardware, and what you should be able to do by the end of it.
+Developing for perception, mapping, navigation, or the manipulator
+specifically? [Start Here](start-here.md) covers those paths too.
+
+Found a mistake or an unclear page? [Report it as a GitHub
+issue](https://github.com/MoritzSchallenberg/Spot-Tutorial/issues/new).
 
 ## About this site
 
