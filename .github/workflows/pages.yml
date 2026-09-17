@@ -68,7 +68,15 @@ jobs:
         # -W turns warnings into errors, so a broken link or a bad
         # cross-reference fails the build instead of shipping quietly.
         # --keep-going reports every problem in one run rather than the first.
-        run: sphinx-build -W --keep-going -b html docs docs/_build/html
+        # -d puts the doctree cache outside docs/_build/html: Sphinx's own
+        # default is a ".doctrees" directory *inside* the output directory,
+        # which is a real content leak here -- those pickle files hold the
+        # full parsed content of every page, and both the secret-scan step
+        # below and the StatiCrypt encryption step operate on this whole
+        # directory tree; StatiCrypt only wraps .html files, so anything
+        # else placed inside it (like a stray .doctrees) is copied straight
+        # through to the published site completely unencrypted.
+        run: sphinx-build -W --keep-going -d docs/_build/doctrees -b html docs docs/_build/html
 
       - name: Check that no secrets reached the output
         # Cheap safety net: the repository is public, and the source material
@@ -147,6 +155,23 @@ jobs:
           fi
           npx --yes staticrypt@3.5.4 docs/_build/html -d docs/_build/encrypted -r --short
           echo "OK: site encrypted to docs/_build/encrypted/html"
+
+      - name: Remove the unencrypted search index from the published site
+        # StatiCrypt only wraps .html files in its password-gate template;
+        # it has no way to protect a plain .js/.json data file. Sphinx's
+        # built-in search ships the full-text index for every page as
+        # searchindex.js -- every word used anywhere on the site, openly
+        # readable at a fixed, predictable URL regardless of the password
+        # gate. That is a real leak of the exact content the gate exists to
+        # protect, not a cosmetic one, so it is deleted from the published
+        # (encrypted) output specifically -- local development builds keep
+        # it, and in-site full-text search still works before publishing.
+        # This does mean the published site's search box will not return
+        # results; that trade-off is intentional given the task's password
+        # gate must be a real access hurdle, never a partial one.
+        run: |
+          rm -f docs/_build/encrypted/html/searchindex.js
+          echo "OK: searchindex.js removed from the published output"
 
       - name: Check external links
         # Informational only. Internal links and images are already validated
