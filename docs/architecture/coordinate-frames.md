@@ -118,6 +118,13 @@ graph TD
     map -.->|"defined,<br/>currently inactive"| odom
 :::
 
+**Legend:** solid arrows are static or dynamic TF publications actually
+active in the current code; dashed arrows are relationships that exist
+in the code but are not a standard, always-active part of the tree —
+either a reference frame used only by the SDK's odometry output
+(`vision`), or a transform that is defined but currently commented out
+of its launch file (`map`→`odom`).
+
 ## Verification
 
 `Verified in code` for every frame and relationship shown; this page

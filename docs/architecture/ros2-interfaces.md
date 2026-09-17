@@ -97,14 +97,15 @@ GraphNav, and world-object services: `spot-code-audit.md` (internal).
 ## Diagram: ROS 2 communication overview
 
 :::{mermaid}
-:alt: Node graph showing the operator dashboard and DualSense controller publishing commands to the Spot driver, which exposes status and state topics, and separately the Kinova driver and MoveIt exchanging joint state and trajectory actions.
+:alt: Node graph showing the operator dashboard and DualSense controller publishing commands to the Spot driver, which exposes status and state topics, and separately the Kinova driver and MoveIt exchanging joint state and trajectory actions. A stamped-twist converter node sits between navigation and the Spot driver rather than navigation publishing directly to the driver's own cmd_vel topic.
 
 graph LR
     OpDash["Operator dashboard /<br/>DualSense teleop"] -->|"cmd_vel, body_pose"| SpotDriver["spot_driver"]
     SpotDriver -->|"status/estop, odometry,<br/>joint_states"| RViz["RViz / dashboard displays"]
     SpotDriver -->|"images, point clouds"| Octomap["octomap_server"]
     Octomap -->|"/octomap_binary,<br/>/octomap_full"| Nav["move_base_flex<br/>(bring_up_alert_nav)"]
-    Nav -->|"/cmd_vel_stamped"| SpotDriver
+    Nav -->|"/cmd_vel_stamped"| Conv["stamped_twist_converter<br/>(alert_utils)"]
+    Conv -->|"cmd_vel"| SpotDriver
     KinovaDriver["kortex_driver"] -->|"/joint_states"| MoveIt["move_group<br/>(spot_gen3_moveit)"]
     MoveIt -->|"/move_action,<br/>FollowJointTrajectory"| KinovaDriver
     OpDash -->|"/twist_controller/commands"| KinovaDriver

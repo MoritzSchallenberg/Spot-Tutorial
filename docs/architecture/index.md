@@ -16,6 +16,31 @@ than a generic robotics description. Every component and interface
 listed here has a concrete source reference in `spot-code-audit.md`
 (internal); nothing is included on the basis of a filename or a guess.
 
+## At a glance
+
+Before the detailed pages below, the whole system in one picture:
+
+:::{mermaid}
+:alt: Overview diagram showing the operator at the Operator Station connecting to the Robot Computer and ROS 2, which connects to Spot Base, Sensors, and the Manipulator Controller, and separately runs perception, mapping, navigation, and autonomy on top of sensor data, feeding back into the Robot Computer.
+
+graph TD
+    Operator["Operator"] --> Interface["Operator Station<br/>(dashboard, RViz)"]
+    Interface --> Computer["Robot Computer and ROS 2<br/>(spot_driver, move_group, nav stack)"]
+    Computer --> Base["Spot Base"]
+    Computer --> Sensors["Sensors"]
+    Computer --> Manipulator["Manipulator Controller<br/>(Kinova Gen3 + gripper)"]
+    Sensors --> Autonomy["Perception / Mapping /<br/>Navigation / Autonomy"]
+    Autonomy --> Computer
+:::
+
+Every box above is a real role with real evidence, not a simplification
+that hides an unresolved question — see the open questions called out
+on [Computers and Network](computers-and-network.md) (Zenoh vs.
+Fast-DDS), [Hardware Overview](hardware-overview.md) (gripper model,
+6- vs. 7-DOF), and [Coordinate
+Frames](coordinate-frames.md) (`feet_center` vs. `body`) before
+treating any one path through this diagram as fully settled.
+
 ## System context
 
 This section describes the system as found in the current Spot

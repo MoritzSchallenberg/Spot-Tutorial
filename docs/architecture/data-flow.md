@@ -55,12 +55,13 @@ Interfaces](ros2-interfaces.md).
 ## Diagram: sensor-to-action data flow
 
 :::{mermaid}
-:alt: Flow diagram showing sensors feeding octomap_server, which feeds navigation, which outputs velocity commands back to the Spot driver; and separately perception feeding MoveIt, which commands the Kinova driver.
+:alt: Flow diagram showing sensors feeding octomap_server, which feeds navigation, which outputs velocity commands through a stamped-twist converter back to the Spot driver; and separately perception feeding MoveIt, which commands the Kinova driver.
 
 graph LR
     Sensors["LiDAR / depth sensors"] --> Octomap["octomap_server"]
     Octomap --> Nav["move_base_flex<br/>(bring_up_alert_nav)"]
-    Nav -->|"/cmd_vel_stamped"| SpotDriver["spot_driver"]
+    Nav -->|"/cmd_vel_stamped"| Conv["stamped_twist_converter<br/>(alert_utils)"]
+    Conv -->|"cmd_vel"| SpotDriver["spot_driver"]
     SpotDriver -->|"motor commands"| SpotBase["Spot Base"]
 
     Cameras["Cameras / markers"] --> Perception["Perception<br/>(detection, frame_server waypoints)"]
@@ -72,17 +73,36 @@ graph LR
 ## Diagram: safety and stop signal chain
 
 :::{mermaid}
-:alt: Flow diagram showing the physical E-stop button, the software E-stop endpoint process, and the power/motor services, and how each relates to the Spot driver's activation checks. The manipulator's separate fault-reset path is shown alongside, not merged with Spot's E-stop chain.
+:alt: Flow diagram showing the physical E-stop button and the software E-stop endpoint both registering with Spot's own firmware and SDK, which is separately queried by the hardware interface's activation check and published as a monitoring topic. The manipulator's separate fault-reset path is shown alongside, not merged with Spot's E-stop chain.
 
 graph TD
-    PhysicalEstop["Physical E-stop button(s)<br/>(hardware-level, outside this codebase)"] -.->|"Unverified on hardware:<br/>exact physical effect"| SpotFirmware["Spot's own firmware/SDK"]
-    SoftEstop["Software E-stop endpoint<br/>(spot_estop.py process)"] -->|"status/estop"| SpotDriverActivate["spot_hardware_interface<br/>on_activate(): check_estop()"]
-    SoftEstop -.->|"required present<br/>before driver commands robot"| SpotDriverMain["spot_driver main node"]
+    PhysicalEstop["Physical E-stop button(s)<br/>(hardware-level, outside this codebase)"] -.->|"Unverified on hardware:<br/>exact physical effect"| SpotFirmware["Spot's own firmware/SDK<br/>(estop state)"]
+    SoftEstop["Software E-stop endpoint<br/>(spot_estop.py process)"] -->|"registers as estop<br/>endpoint via bosdyn SDK"| SpotFirmware
+    SpotFirmware -->|"IsEstopped() SDK call"| SpotDriverActivate["spot_hardware_interface<br/>on_activate(): check_estop()"]
+    SpotFirmware -->|"published as"| StatusEstop["status/estop topic<br/>(monitoring/dashboard only)"]
+    SoftEstop -.->|"process must be present<br/>before driver commands robot"| SpotDriverMain["spot_driver main node"]
     RosEstopServices["estop/hard, estop/gentle,<br/>estop/release (ROS services)"] -.->|"flagged non-functional<br/>in driver code comment"| SoftEstop
     PowerServices["power_on / power_off<br/>services"] --> SpotDriverMain
 
     KinovaFault["Kinova fault detected<br/>(ARMSTATE_IN_FAULT)"] --> ResetFault["reset_fault sequence:<br/>ApplyEmergencyStop x2, ClearFaults"]
     ResetFault --> KinovaDriver["kortex_driver"]
+:::
+
+**Legend:** solid arrows are direct code-level calls or ROS interfaces;
+dashed arrows are either a relationship whose real-world effect is
+unverified (the physical E-stop button's actual firmware effect), a
+precondition rather than a data flow (the software endpoint process
+being present before the driver will act), or a code path flagged
+broken in its own source comment (the ROS `estop/*` services).
+
+:::{admonition} This diagram simplifies one real relationship
+:class: note
+
+`status/estop` is a monitoring/dashboard output, not the mechanism
+`spot_hardware_interface`'s `check_estop()` actually uses — that
+function calls the Boston Dynamics SDK's `IsEstopped()` directly. Both
+ultimately read the same underlying estop state, but they are two
+separate code paths, not one topic feeding the other.
 :::
 
 ## Verification
