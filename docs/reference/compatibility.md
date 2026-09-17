@@ -1,145 +1,69 @@
-# Versions and compatibility
+# Supported environment
 
-The three source courses that this site was built from targeted **different**
-operating systems, ROS 2 distributions and simulator versions. Following an
-instruction written for one system on another produces failures that look like
-broken code and are not.
+{{ foundation }}
 
-This page records what each instruction was written for.
+This site is fixed to one toolchain. Every command, package name and
+example on this site is written for the environment below — there is no
+distribution choice to make, and no per-command version badge, because this
+is simply what the whole site assumes.
 
-:::{danger}
-**Never assume an instruction transfers between tracks.** ROS 2 distributions
-are not compatible with each other: package names differ
-(`ros-humble-*` vs `ros-jazzy-*`), APIs change between releases, and a package
-that exists in one may not exist in the other.
+```text
+Ubuntu 22.04 LTS
+ROS 2 Humble
+Python 3
+colcon
+RViz2
+ALeRT simulation environment (Webots)
+```
 
-Where this site could not verify a command on a given distribution, it says so
-rather than guessing.
+Install it with [ROS 2's installation
+guide](../ros2/installation.md), then confirm it with the
+commands in [Checking your own system](#checking-your-own-system) below.
+
+:::{important}
+Every package name, API and available feature on this site is specific to
+the one distribution above. If you ever consult another ROS 2
+distribution's documentation for reference, treat its package prefixes and
+APIs as informative only, not copy-pasteable onto this site's material.
 :::
 
-## The matrix
+## Simulation-only vs. ALeRT / Spot versions
+
+Everything below runs on the one baseline above; this table only records
+what differs between working through this site with no team hardware
+(Simulation) and working through it on ALeRT's own platform.
 
 ```{list-table}
 :header-rows: 1
-:widths: 16 15 14 14 20 21
+:widths: 20 20 60
 
-* - Platform
-  - OS
-  - ROS 2
+* - Path
   - Simulator
   - Key packages
-  - Status
 * - **Simulation** {{ simulation }}
-  - Ubuntu 22.04 or 24.04
-  - Humble or Jazzy
   - Webots
-  - `webots_ros2`, `nav2`, `slam_toolbox`
-  - Verified against upstream docs; must match the track you follow
-* - **Carologistics / Robotino** {{ carologistics }}
-  - Ubuntu 24.04, or Fedora
-  - Jazzy {{ jazzy }}
-  - Webots
-  - `robotino_navigation`, `rcll_simulation_webots`, `mps-map-gen`,
-    `laser_scan_integrator`, `nav2`
-  - **Inconsistent in the sources** — see the note below
+  - `webots_ros2`, `nav2_bringup`, `slam_toolbox`
 * - **ALeRT / Spot** {{ alert }}
-  - Ubuntu 22.04
-  - Humble {{ humble }}
   - Webots R2023b
-  - `webots_ros2_spot`, `nav2`, `slam_toolbox`, `octomap`, `moveit2`,
-    `rafcon`
-  - As documented by the source course
-* - **ROS Summer School** (origin of much of the general material)
-  - Ubuntu (release not stated)
-  - Humble {{ humble }}
-  - —
-  - `nav2`, `slam_toolbox`, `apriltag_ros`, `usb_cam`, `realsense-ros`
-  - Written for physical hardware; generalised on this site
+  - `webots_ros2_spot`, `nav2_bringup`, `slam_toolbox`, `octomap`,
+    `moveit2`, `rafcon`
 ```
 
-## Known inconsistencies
-
-These are real contradictions in the source material, not errors introduced
-here. They are recorded so that nobody spends an evening on them.
-
-### Carologistics: Jazzy or Humble?
-
-The Carologistics introductory setup guide specifies **Ubuntu 24.04 with ROS 2
-Jazzy**. The `robotino_navigation` repository documents **ROS 2 Humble** and
-states that it has been tested on that release.
-
-**What to do**: check the README of each repository before building it. Ask the
-team which combination is currently deployed on the robots. This page cannot
-resolve the contradiction because resolving it requires testing on the actual
-hardware.
-
-{{ unverified }}
-
-### Webots versions
-
-Both team courses reference **Webots R2023b**. Simulation repositories are
-often pinned to a specific Webots release, and they move independently of this
-site.
-
-**What to do**: install the version the simulation repository's README asks
-for, not the newest release and not the version named here.
-
-{{ unverified }}
-
-### Carologistics runs Fedora as well as Ubuntu
-
-The team's robots and some workstations run Fedora, with setup automated
-through Ansible. The `dnf` commands in the Carologistics material are Fedora
-commands and have no meaning on Ubuntu.
-
-**What to do**: `apt` for Ubuntu, `dnf` for Fedora. The ROS 2 installation
-procedure differs substantially between them.
-
-### The Summer School material assumed specific hardware
-
-Much of the general ROS 2, TF, SLAM and Nav2 content on this site originates
-from the ROS Summer School, which was taught on a specific robot — an iRobot
-Create 3 base with a mini-PC, an RPLidar and a RealSense camera.
-
-On this site that material has been **generalised**: hardware-specific topic
-names, driver packages and IP addresses have been replaced with the general
-concept, and the platform-specific parts moved to the
-[platform pages](../platforms/index.md).
-
-**What to do**: where the course says `/scan` or `/cmd_vel`, check what your
-own system actually uses with `ros2 topic list`.
-
-## Distribution differences that matter
-
-```{list-table}
-:header-rows: 1
-:widths: 25 37 38
-
-* - Topic
-  - Humble {{ humble }}
-  - Jazzy {{ jazzy }}
-* - Ubuntu
-  - 22.04 (Jammy)
-  - 24.04 (Noble)
-* - Support until
-  - May 2027
-  - May 2029
-* - Package prefix
-  - `ros-humble-*`
-  - `ros-jazzy-*`
-* - Default DDS
-  - Fast DDS
-  - Fast DDS
-* - Python
-  - 3.10
-  - 3.12
-```
-
-:::{tip}
-Write `ros-$ROS_DISTRO-<package>` rather than a hard-coded distribution name in
-your commands and documentation. The same line then works on both, and it is
-what this site does throughout.
+:::{note}
+ALeRT's own production repositories evolve independently of this site and
+may run a different Ubuntu release, ROS 2 distribution, or Webots version
+at any given time. Check the README of a repository before building it,
+and treat the table above as this site's documented baseline, not a
+guarantee about a specific production deployment.
 :::
+
+## Hardware-specific names in the general examples
+
+Where a topic uses a generic topic or frame name — `/scan`,
+`/cmd_vel`, `base_link` — check what your own system actually publishes with
+`ros2 topic list` or `ros2 run tf2_tools view_frames`; a real robot's exact
+names depend on its drivers and URDF, and this site deliberately teaches
+the general pattern rather than one specific robot's naming.
 
 ## Checking your own system
 
@@ -160,7 +84,15 @@ ros2 pkg xml <package_name> | grep version
 echo $RMW_IMPLEMENTATION
 ```
 
+Expect `humble` from the first command and `22.04` (Jammy) from the second.
+Anything else means either the setup script did not complete, or `.bashrc`
+is not sourcing `/opt/ros/humble/setup.bash` — see the [installation
+guide's troubleshooting section](../ros2/installation.md#common-installation-problems).
+
 ## Status legend
+
+Difficulty, based on genuine technical difficulty rather than how central a
+topic is:
 
 ```{list-table}
 :header-rows: 1
@@ -168,42 +100,68 @@ echo $RMW_IMPLEMENTATION
 
 * - Marker
   - Meaning
-* - {{ common }}
-  - Applies to every platform and both distributions
+* - {{ foundation }}
+  - Needs no prior topic on this site beyond what its own Prerequisites
+    section states.
+* - {{ intermediate }}
+  - Builds directly on one or more Foundation topics.
+* - {{ advanced }}
+  - A real capability, actively used by ALeRT, that takes more background
+    or care to apply correctly.
+* - {{ research }}
+  - Documented for completeness; not part of ALeRT's competition-ready
+    path today.
+```
+
+Verification, describing what has actually been checked rather than what
+is merely plausible:
+
+```{list-table}
+:header-rows: 1
+:widths: 25 75
+
+* - Marker
+  - Meaning
+* - {{ documented }}
+  - Confirmed via a repository or written documentation.
 * - {{ simulation }}
-  - Simulation only
-* - {{ carologistics }}
-  - Specific to Carologistics / Robotino
-* - {{ alert }}
-  - Specific to ALeRT / Spot
-* - {{ jazzy }}
-  - Written for ROS 2 Jazzy
-* - {{ humble }}
-  - Written for ROS 2 Humble
+  - Runs in Webots.
+* - {{ hardwareverified }}
+  - Actually checked on running hardware.
 * - {{ unverified }}
   - Taken from source material and **not verified** on current hardware.
     Confirm before relying on it.
+* - {{ hwverificationrequired }}
+  - Plausible from documentation, but needs a real hardware check before
+    being trusted for a competition run.
+* - {{ experimental }}
+  - Known to be incomplete or unstable; expect rough edges.
+* - {{ historical }}
+  - No longer current; kept for context only.
 ```
+
+{{ alert }} marks content specific to the ALeRT team rather than a general
+ROS 2 concept.
 
 ## A note on how this site handles uncertainty
 
-Where the source material was ambiguous, incomplete, or contradicted itself,
-this site does one of three things rather than inventing an answer:
+Where a technical detail could not be verified — because it depends on
+hardware this site cannot test, or on an internal repository — this site
+does one of two things rather than inventing an answer:
 
-1. States the contradiction explicitly, as above.
-2. Marks the section with a visible **TODO-REVIEW** admonition.
-3. Points at the authoritative upstream source — a repository README or the
+1. Marks the statement with the {{ unverified }} badge.
+2. Points at the authoritative upstream source — a repository README or the
    official ROS 2 documentation — instead of reproducing details that may be
    stale.
 
-Commands, topic names and package names on this site are either taken directly
-from the source material, or verified against primary documentation. None have
-been guessed.
+Commands, topic names and package names on this site are either verified
+against primary documentation for ROS 2 Humble, or explicitly marked
+unverified. None have been guessed, and none are carried over unchecked from
+a newer distribution's documentation.
 
 ## Further reading
 
-- [ROS 2 distributions](https://docs.ros.org/en/rolling/Releases.html) — the
-  release schedule and support windows
 - [ROS 2 Humble documentation](https://docs.ros.org/en/humble/)
-- [ROS 2 Jazzy documentation](https://docs.ros.org/en/jazzy/)
-- [Ubuntu release cycle](https://ubuntu.com/about/release-cycle)
+- [ROS 2 distributions](https://docs.ros.org/en/rolling/Releases.html) — the
+  release schedule and support windows, for context on why this site
+  chose Humble

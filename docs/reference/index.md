@@ -13,28 +13,20 @@ Every command you will actually use, grouped by what you are trying to do —
 plus a diagnostic sequence for when nothing works.
 :::
 
-:::{grid-item-card} Versions and compatibility
+:::{grid-item-card} Supported environment
 :link: compatibility
 :link-type: doc
 
-Which platform runs which Ubuntu, which ROS 2 distribution, and which
-simulator — and where the source material contradicts itself.
+The site's fixed toolchain — Ubuntu 22.04, ROS 2 Humble — and the
+per-track simulator and package versions.
 :::
 
 :::{grid-item-card} Glossary
 :link: glossary
 :link-type: doc
 
-Every term used in the course, in plain language, with a link to where it is
+Every term used in the site, in plain language, with a link to where it is
 explained properly.
-:::
-
-:::{grid-item-card} Sources and licenses
-:link: sources
-:link-type: doc
-
-Where this material came from, how it was used, what was excluded, and the
-licenses of the software the course teaches.
 :::
 
 ::::
@@ -46,17 +38,17 @@ licenses of the software the course teaches.
 
 **"RViz shows nothing and there is no error."**
 → QoS mismatch.
-[Session 3](../course/03-sensors-tf.md#when-rviz-shows-nothing)
+[Sensors and Coordinate Frames](../sensors-frames/practical-exercise.md#common-problems)
 
-**"Which ROS 2 distribution should I install?"**
-→ [Compatibility matrix](compatibility.md)
+**"What exact software versions does this site use?"**
+→ [Supported environment](compatibility.md)
 
 **"What does that acronym mean?"**
 → [Glossary](glossary.md)
 
 **"Everything times out in simulation."**
 → `use_sim_time`.
-[Simulation](../platforms/simulation.md#simulation-time)
+[Simulation](../simulation/index.md#simulation-time)
 
 ```{toctree}
 :hidden:
@@ -65,5 +57,4 @@ licenses of the software the course teaches.
 ros2-cheatsheet
 compatibility
 glossary
-sources
 ```

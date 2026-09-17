@@ -20,6 +20,31 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  examples:
+    name: Build and test the example ROS 2 packages
+    # Independent of the Sphinx build/deploy below: this never blocks or
+    # delays publishing the site, it only checks that the example package(s)
+    # referenced from the course pages actually build under ROS 2 Humble.
+    #
+    # action-ros-ci does its own checkout of "the code under test" via vcs,
+    # and recursively discovers every package.xml in the repository -- no
+    # explicit actions/checkout step or colcon path override needed, and a
+    # previous version of this job that added both failed for reasons the
+    # log did not make visible. This matches ros-tooling/action-ros-ci's own
+    # minimal documented usage exactly.
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Set up ROS 2 Humble
+        uses: ros-tooling/setup-ros@v0.7
+        with:
+          required-ros-distributions: humble
+
+      - name: Build and test turtle_tutorial (ROS 2 topic)
+        uses: ros-tooling/action-ros-ci@v0.4
+        with:
+          package-name: turtle_tutorial
+          target-ros2-distro: humble
+
   build:
     name: Build the Sphinx site
     runs-on: ubuntu-latest
@@ -47,50 +72,109 @@ jobs:
 
       - name: Check that no secrets reached the output
         # Cheap safety net: the repository is public, and the source material
-        # this site was built from contained credentials and signed URLs.
+        # this site was built from contained cleartext credentials and signed
+        # URLs. See SECURITY_REVIEW.md.
+        #
+        # The credential pattern is applied to the generated content pages
+        # only. Scanning _static/ as well produces false positives from
+        # third-party assets -- Font Awesome ships a `.fa-user-secret:before`
+        # rule that matches any naive "secret:" pattern.
         run: |
           set -e
-          echo "Scanning built HTML for secrets and internal data..."
+          echo "Scanning build output for secrets and internal data..."
+          fail=0
 
+          echo "-> signed / tokenised URLs (whole output)"
           if grep -rEn 'X-Amz-|Signature=|[?&]jwt=|[?&]token=' \
                docs/_build/html; then
             echo "::error::Signed or tokenised URL found in the build output"
-            exit 1
+            fail=1
           fi
 
+          echo "-> private key material (whole output)"
           if grep -rEn 'BEGIN [A-Z ]*PRIVATE KEY|ssh-rsa AAAA|ssh-ed25519 AAAA' \
                docs/_build/html; then
             echo "::error::Private key material found in the build output"
-            exit 1
+            fail=1
           fi
 
-          if grep -rEn '(password|passwd|secret|api[_-]?key|token|credential)[[:space:]]*[:=][[:space:]]*[A-Za-z0-9_.-]{6,}' \
+          echo "-> credentials (generated content pages)"
+          if grep -rEn --include='*.html' \
+               '(password|passwd|secret|api[_-]?key|token|credential)[[:space:]]*[:=][[:space:]]*[A-Za-z0-9_./+-]{6,}' \
                docs/_build/html; then
-            echo "::error::Possible credential found in the build output"
-            exit 1
+            echo "::error::Possible credential found in the generated pages"
+            fail=1
           fi
 
-          echo "No secrets found in the build output."
+          echo "-> internal hosts and private repositories (content pages)"
+          if grep -rEn --include='*.html' \
+               'git\.fh-aachen\.de|private-user-images\.githubusercontent\.com' \
+               docs/_build/html; then
+            echo "::error::Internal host or private image URL found"
+            fail=1
+          fi
 
-      - name: Check internal links and images
-        # linkcheck also validates external URLs, which makes it flaky in CI,
-        # so external failures are reported but do not fail the build.
+          if [ "$fail" -ne 0 ]; then
+            exit 1
+          fi
+          echo "OK: no secrets found in the build output."
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Encrypt the site behind a password gate
+        # The task requires a static-hosting access hurdle (StatiCrypt),
+        # not real server-side authentication -- see README.md. The
+        # password itself must never appear in a log or in the repository:
+        # it is read from the STATICRYPT_PASSWORD secret via the
+        # environment, which staticrypt's CLI picks up automatically
+        # (never passed as a -p command-line argument, which would show up
+        # in the Action's own "Run" log line). -r encrypts every HTML file
+        # recursively, so direct subpages are protected too, not only the
+        # site root. The build must fail, not deploy an unprotected site,
+        # if the secret is missing -- so this step checks for it itself
+        # rather than letting a blank password silently produce an
+        # unlocked page.
+        env:
+          STATICRYPT_PASSWORD: ${{ secrets.STATICRYPT_PASSWORD }}
         run: |
-          sphinx-build -b linkcheck docs docs/_build/linkcheck || true
+          set -e
+          if [ -z "$STATICRYPT_PASSWORD" ]; then
+            echo "::error::STATICRYPT_PASSWORD secret is not set -- refusing to deploy an unprotected site. See README.md for the required manual setup step."
+            exit 1
+          fi
+          npx --yes staticrypt@3.5.4 docs/_build/html -d docs/_build/encrypted -r --short
+          echo "OK: site encrypted to docs/_build/encrypted/html"
+
+      - name: Check external links
+        # Informational only. Internal links and images are already validated
+        # by the `-W` build above; this step checks that external URLs still
+        # resolve. External sites go down, rate-limit and block CI runners, so
+        # it must never be the reason a deploy fails -- and it must never hang:
+        # a single slow host can otherwise stall the job for hours.
+        timeout-minutes: 6
+        continue-on-error: true
+        run: |
+          timeout 300 sphinx-build -b linkcheck docs docs/_build/linkcheck \
+            || echo "linkcheck did not finish cleanly (informational only)"
           echo "--- linkcheck summary ---"
-          if [ -f docs/_build/linkcheck/output.txt ]; then
+          if [ -s docs/_build/linkcheck/output.txt ]; then
             cat docs/_build/linkcheck/output.txt
           else
             echo "No broken links reported."
           fi
-        continue-on-error: true
 
       - name: Upload the Pages artifact
         # Only the deploy job needs the artifact, but uploading on pull
-        # requests too confirms the artifact step itself works.
+        # requests too confirms the artifact step itself works. The
+        # encrypted output (docs/_build/encrypted/html), never the raw
+        # unprotected build, is what gets published -- see "Encrypt the
+        # site behind a password gate" above.
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs/_build/html
+          path: docs/_build/encrypted/html
 
   deploy:
     name: Deploy to GitHub Pages

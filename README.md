@@ -1,48 +1,69 @@
-# Learning Robotics Crash Course
+# ALeRT Spot Tutorial
 
-A shared introduction to autonomous mobile robotics for the teams and research
-groups of the **MASKOR Institute at FH Aachen**.
+A technical reference for the **ALeRT** (Aachen Legged Rescue Team) Spot
+system: a Boston Dynamics Spot quadruped fitted with a Kinova Gen3
+manipulator and Robotiq gripper, operated by the RoboCup Rescue League
+team at the **MASKOR Institute, FH Aachen**. It documents the real
+system's safety procedures, operating procedures, and hardware/software
+architecture, grounded in the team's own code and configuration.
 
 **Website:** <https://moritzschallenberg.github.io/Learning-Robotics-Crash-Course/>
+(repository name and Pages URL are unchanged for now — see
+[`maintainers/rebrand-followups.md`](maintainers/rebrand-followups.md) for
+what a later transfer to an `RRL-ALeRT` repository would require)
 
-The course brings together teaching material that used to live in three
-separate places — the ROS Summer School, the ALeRT/Spot practical course and
-the Carologistics team wiki — into one path that every team can follow. Eight
-evening sessions build up from the anatomy of a robot to a fully autonomous
-mission, and a closing hackathon puts it all together.
+This is a long-lived technical reference, not a scheduled course: it
+carries no dates, sessions or event logistics — see
+[`maintainers/`](maintainers/) for anything organisational.
+
+> **Note:** the site was pivoted from a general, topic-based robotics
+> reference ("ALeRT Advanced Robotics Tutorial") into a Spot-specific
+> system tutorial (Entwicklungsauftrag 9, `feat/alert-spot-tutorial`).
+> The former 13 independent topics still exist as content (see
+> "Project structure" below) but are no longer the site's primary
+> navigation — see `maintainers/spot-tutorial-migration-report.md` for
+> the full account of what moved where and why.
 
 ## Goal
 
-New members of the robotics teams should be able to work through one course
-and arrive at a shared foundation, regardless of which robot their team runs.
-The general fundamentals are explained **once**; team-specific commands and
-systems live on separate platform pages that link back to them.
+Document the ALeRT Spot system itself — safety, operation, and
+architecture — grounded in the team's current code and deployment
+configuration (see `maintainers/spot-code-audit.md`), not in memory or
+convention. Every claim carries an explicit verification level; nothing
+is asserted as confirmed on real hardware without a test record backing
+it.
 
-**Audience:** new members of the robotics teams with some technical grounding.
-Some programming (Python is enough), comfort with a terminal, and an interest
-in how autonomous robots work. No prior ROS experience is needed, and no robot
-— every session can be followed in simulation.
+**Audience:** anyone preparing to operate the physical Spot system, or
+anyone who wants to understand how it is built, from team members to
+anyone consulting a specific topic as a reference.
+
+**ALeRT on GitHub:** <https://github.com/RRL-ALeRT> — the team's public
+repositories this site's topics link back to throughout.
 
 **Language:** English.
 
-## Course structure
+## Current structure
 
-Eight evenings, all 17:35–19:00, plus a hackathon.
+Eleven top-level sections, following the real Spot system rather than
+independent topics:
 
-| # | Date | Session |
-|---|---|---|
-| 1 | Mon, 05 Oct 2026 | System Architecture and Robot Hardware |
-| 2 | Wed, 07 Oct 2026 | ROS 2 Fundamentals |
-| 3 | Mon, 12 Oct 2026 | Sensors, TF2 and RViz |
-| 4 | Wed, 14 Oct 2026 | Perception and Object Detection |
-| 5 | Mon, 19 Oct 2026 | Mapping and Localization |
-| 6 | Wed, 21 Oct 2026 | Autonomous Navigation |
-| 7 | Mon, 26 Oct 2026 | Autonomous Decisions and Manipulation |
-| 8 | Wed, 28 Oct 2026 | System Integration and Testing |
-| — | Sat–Sun, 07–08 Nov 2026 | Hackathon: Autonomous Robot Challenge |
+| Section | Focus |
+|---|---|
+| About ALeRT and Spot | Team and RoboCup Rescue League history |
+| Safety and Prerequisites | Stop states, E-stops, operating area, required knowledge |
+| Operating Spot | Power-on through shutdown, driving, manipulator control, recovery |
+| System Architecture | Hardware, network, software, startup order, ROS 2 interfaces, frames, data flow |
+| Sensors and Perception | Cameras, LiDAR, IMU, TF2, marker/object detection |
+| Navigation and Mapping | Occupancy grids, SLAM, Nav2-style planning and control |
+| Manipulator and MoveIt | Arm fundamentals, MoveIt 2, grippers |
+| Autonomous Behaviors | State machines, behavior trees, worked mission examples |
+| Deployment and Configuration | Simulation, the platform/simulation reference, hardware-design tooling |
+| Diagnostics and Testing | Startup order, configuration, systematic debugging |
+| Reference | Cheat sheet, supported environment, glossary |
 
-Three platform tracks run alongside: **Simulation**,
-**Carologistics/Robotino** and **ALeRT/Spot**.
+The system runs on **Ubuntu 22.04 LTS and ROS 2 Humble**
+(`docs/reference/compatibility.md`), unless a specific ALeRT repository
+is documented to need something else.
 
 ## Building the site locally
 
@@ -83,53 +104,134 @@ pip install sphinx-autobuild
 sphinx-autobuild docs docs/_build/html
 ```
 
+## Access protection
+
+The published site is wrapped in a static password gate
+([StatiCrypt](https://github.com/robinmoisson/staticrypt)) by the
+`.github/workflows/pages.yml` deploy pipeline, as an access hurdle for
+this pre-release documentation — **this is not real server-side
+authentication.** The page and all of its assets are still delivered
+to any visitor's browser; StatiCrypt only prevents the *content* from
+being readable without the password, using client-side decryption. Do
+not rely on it to keep anything genuinely confidential — nothing
+confidential is or should be published on this site regardless (see
+`maintainers/spot-security-audit.md`, internal).
+
+The workflow encrypts every HTML page — including direct links to
+subpages, not just the site root — using the `STATICRYPT_PASSWORD`
+repository secret. If that secret is not set, the build step fails
+loudly instead of silently deploying an unprotected site. The password
+value itself never appears in the repository, in any workflow file, or
+in build logs.
+
+**Manual admin step (not automated by this repository):** a repository
+owner must set the `STATICRYPT_PASSWORD` secret under *Settings →
+Secrets and variables → Actions* before the site can deploy
+successfully. This documentation does not state the password value.
+
 ## Project structure
 
+**`docs/`** is the entire published website — everything Sphinx builds and
+everything GitHub Pages serves. Nothing outside `docs/` is ever built or
+deployed; see [Learner-only site](#learner-only-site-what-is-and-is-not-published)
+below for what that guarantees.
+
 ```text
-.github/workflows/pages.yml   Build, secret-scan and deploy to GitHub Pages
+.github/workflows/pages.yml   Build, secret-scan, password-gate and deploy
 
-docs/
-  conf.py                     Sphinx configuration, incl. platform badges
-  index.md                    Landing page
+docs/                          <-- published website; nothing else is built
+  conf.py                     Sphinx configuration, incl. badges, mermaid
+  index.md                    Landing page, one toctree per Section 6 nav item
 
-  prerequisites/              Do these before session 1
-    linux-terminal.md         Terminal, filesystem, .bashrc
-    installation.md           Ubuntu, ROS 2, workspace, simulator
-    git.md                    Git workflow and team conventions
-    networking.md             Domain IDs, SSH, subnets
+  about/                       About ALeRT and Spot (history, migrated from
+                                the former ALeRT Spot tutorial)
+  safety/                      Safety and Prerequisites
+  operating/                   Operating Spot (step-by-step procedures)
+  architecture/                System Architecture (hardware, network,
+                                software, startup, ROS 2 interfaces, TF,
+                                data flow -- incl. Mermaid diagrams)
 
-  course/                     The eight sessions
-    01-system-hardware.md   … 08-integration.md
-    hackathon.md              Final challenge
+  sensors-and-perception/      Hub page linking sensors-frames/ + perception/
+  navigation-and-mapping/      Hub page linking mapping-world-models/ +
+                                navigation-exploration/
+  manipulation/                Manipulator and MoveIt
+  autonomous-behaviors/        Hub page linking decision-making/ +
+                                rescue-projects/
+  deployment-and-configuration/ Hub page linking simulation/ + platforms/
+  integration-testing/         Diagnostics and Testing
+  reference/                   Cheat sheet, supported environment, glossary
 
-  platforms/                  Team-specific material only
-    simulation.md
-    carologistics-robotino.md
-    alert-spot.md
-
-  reference/
-    ros2-cheatsheet.md        Commands, grouped by intent
-    compatibility.md          Version matrix and known conflicts
-    glossary.md
-    sources.md                Attribution and licensing
+  getting-started/, ros2/, simulation/, platforms/ (incl. spot/,
+  hardware-design/), sensors-frames/, perception/, mapping-world-models/,
+  navigation-exploration/, decision-making/, rescue-projects/
+                                Pre-existing topic content (Entwicklungsauftrag
+                                8), kept at its original path and linked into
+                                the new navigation above rather than moved --
+                                docs/platforms/spot/index.md alone is
+                                cross-linked from ~30 other pages
 
   _static/
     css/custom.css            Theme layer, badges, light/dark palette
     js/color-mode.js          Light/dark toggle (name must not be theme.js,
                               which would shadow the RTD theme's own script)
-    images/                   (empty — see CONTENT_REVIEW.md §4.4)
+    images/diagrams/          Original SVG diagrams
+    images/history/           Migrated historical photos (About section)
+    images/historical-interface/  Migrated "Historical interface" screenshots
+                                   (Operating Spot section)
   _extra/.nojekyll
+
+maintainers/                   NOT built, NOT deployed, NOT in any toctree
+  instructors/                 Facilitator/event material -- see below
+  content-audit.md             Audit of the archived Spot-tutorial source
+  repository-audit.md          Live inventory of public RRL-ALeRT repos
+  rebrand-followups.md         What a future repo transfer would need
+  spot-source-audit.md         Local source inventory (Entwicklungsauftrag 9)
+  spot-security-audit.md       Credential/PII/network-data audit, categories only
+  spot-code-audit.md           Full Spot code audit: repos, ROS packages,
+                              runtime components, interfaces, TF frames
+  historical-asset-migration.md  Provenance/checksum table for every
+                              migrated image
+  spot-tutorial-migration-report.md  Entwicklungsauftrag 9 final report
+
+examples/                      Real, colcon-buildable starter packages
+  ros2_turtlesim/               ROS 2 topic's practical task
+    turtle_tutorial/            The actual ROS 2 package -- build this
+    solutions/                 Reference solution, kept separate from
+                               the package so it is never accidentally
+                               built or imported by it
+
+scripts/
+  tutorial-preflight.sh        Read-only environment check (linked from the site)
+  verify-structure.py           Source-level structure checks (no build needed)
+  verify-site.py                Browser-level checks (not part of the build)
 
 requirements.txt              Pinned documentation toolchain
 CONTENT_MAP.md                Inventory of all 78 source documents
 CONTENT_REVIEW.md             Included / merged / platform-specific / excluded
 SECURITY_REVIEW.md            Secret-scan findings and remediation
 LICENSES.md                   Attribution and licensing
+DECISIONS_NEEDED.md           Open organisational decisions (repo only,
+                              not linked from the public site)
 ```
 
-### Deviations from the originally proposed structure
+### Learner-only site: what is and is not published
 
-Three, all small and reversible:
+The published website contains only what a participant needs to learn,
+practise, look something up, or fix a technical problem — no dates,
+schedules, facilitator instructions, room planning, or event roles. See the
+guiding question in `DECISIONS_NEEDED.md` and the "Editing the content"
+section below for what that means when adding new pages.
+
+`maintainers/instructors/` holds facilitator-facing material that was
+previously part of the site (`docs/instructors/`) and has been moved out:
+it is not in `docs/`, not referenced by any `toctree`, not linked from any
+public page, and consequently never reaches the Sphinx build, the search
+index, or the GitHub Pages artifact. `DECISIONS_NEEDED.md`,
+`tutorial-preflight.sh` and `verify-site.py` remain in the repository root /
+`scripts/` because they are genuinely useful to keep versioned, without
+being part of the website either.
+
+### Deviations from the originally proposed structure
 
 1. **Added `course/index.md`, `platforms/index.md` and `reference/index.md`.**
    Every `toctree` now has a parent page. This keeps breadcrumbs sensible,
@@ -140,23 +242,88 @@ Three, all small and reversible:
    branch-based publishing.
 3. **Added `sphinx-design`** to the toolchain, for the landing-page cards and
    the collapsible solution blocks used in the exercises.
-
-`docs/_static/images/` exists but is empty — see `CONTENT_REVIEW.md` §4.4 for
-why no images are published yet.
+4. **Split `course/04-perception.md`** into a core page plus four deeper
+   chapters (`camera-calibration`, `fiducial-markers`, `object-detection`,
+   `data-labeling`) under `course/04-perception/`, to keep the core module
+   page focused on its one practical task.
+5. **Moved `docs/instructors/` to `maintainers/instructors/`**, out of the
+   Sphinx source tree entirely, so the published site carries no
+   event-organisation content — see above.
+6. **Fixed the whole course to ROS 2 Humble on Ubuntu 22.04.** Removed the
+   Jazzy/Humble comparison and per-command distribution badges; the
+   `{{ jazzy }}` and `{{ humble }}` substitutions no longer exist.
+   `reference/compatibility.md` ("Supported environment") documents the
+   single fixed toolchain instead of a matrix of alternatives.
+7. **Added `course/01-hardware/`** — a KiCad schematic tutorial and an
+   Autodesk Fusion mechanical-CAD tutorial, linked as cards from module 1
+   and included in its `toctree`, each with its own practical task.
+8. **Added a dropdown-contrast regression check to `verify-site.py`.**
+   Every `sphinx-design` dropdown is opened in both light and dark mode and
+   checked for WCAG AA contrast (composited backgrounds, not raw `rgba()`
+   values) and a visible keyboard focus outline — see `custom.css`'s
+   `--lrcc-accent-solid` design-token comment for why a "banner with white
+   text" needs a different color than a "text/border accent".
+9. **Added a matching sidebar-contrast check.** The same rgba-compositing
+   helper is reused to check every `.wy-menu-vertical a` link on every
+   page, catching a related stock-theme bug where a non-current link
+   inside an expanded branch was painted with a hardcoded light-gray
+   background the site's own dark-sidebar override did not reach.
+10. **Added `examples/ros2_turtlesim/`** (renamed from `module02_turtlesim`
+    during the ALeRT Advanced Robotics Tutorial migration) — a real,
+    `colcon`-buildable ROS 2 Humble package (`turtle_tutorial`, renamed
+    from `turtle_course`) backing the ROS 2 topic's practical task, with
+    its own CI job (`.github/workflows/pages.yml`, the `examples` job)
+    that builds and lints it on every push, independent of the Sphinx
+    site build/deploy.
+11. **Added three "Try it on Spot" safety-level badges**
+    (`{{ spotsim }}` / `{{ spotreadonly }}` / `{{ spotsupervised }}`) and
+    a matching section in every topic, indexed from
+    `platforms/spot/index.md`.
+12. **Restructured the whole `course/` tree into 13 topic-based
+    directories** (Entwicklungsauftrag 8 / 8A: rebrand to "ALeRT Advanced
+    Robotics Tutorial", removal of all Carologistics/Robotino content,
+    migration to the topic layout in "Project structure" above). Module
+    numbers, "Core Learning Path" headings and processing-time estimates
+    were removed; `{{ core }}` / `{{ optional }}` / `{{ common }}` /
+    `{{ platformspecific }}` were replaced by the Foundation / Intermediate
+    / Advanced / Research difficulty badges described in "Content levels"
+    below. Items 1–10 above describe decisions made against the earlier
+    `course/`-based layout and are kept here as a historical record; the
+    "Project structure" tree above is the current, authoritative one.
+13. **Pivoted the site to "ALeRT Spot Tutorial"** (Entwicklungsauftrag 9):
+    new primary navigation (About ALeRT and Spot, Safety and
+    Prerequisites, Operating Spot, System Architecture, then the
+    remaining topics) replacing the 13 independent topics as the site's
+    top-level structure. The 13 topics themselves were kept at their
+    existing paths rather than physically moved (see "Project structure"
+    above) and are now linked into the new navigation instead of being
+    top-level entries in their own right. History content was migrated
+    from the former ALeRT Spot tutorial; safety and operating procedures
+    were rewritten from the current Spot code rather than translated
+    from the old material; a Spot-specific password gate
+    (see "Access protection") replaced the earlier plan to add one
+    "once implemented". Full account:
+    `maintainers/spot-tutorial-migration-report.md`.
 
 ## Editing the content
 
 All content is **MyST Markdown**. Edit the `.md` files and rebuild.
 
-### Platform and version badges
+### Platform and verification badges
 
-Instructions that only apply to one system must be marked. Write the
-substitution and it renders as a styled badge:
+Content that is ALeRT-specific, simulation-only, or of a given verification
+status must be marked. Write the substitution and it renders as a styled
+badge:
 
 ```markdown
-{{ common }}  {{ simulation }}  {{ carologistics }}  {{ alert }}
-{{ jazzy }}   {{ humble }}      {{ unverified }}
+{{ alert }}  {{ simulation }}  {{ documented }}  {{ hardwareverified }}
+{{ unverified }}  {{ hwverificationrequired }}  {{ experimental }}  {{ historical }}
 ```
+
+See `docs/reference/compatibility.md`'s "Status legend" for what each one
+means. The whole site is fixed to one toolchain — Ubuntu 22.04 LTS, ROS 2
+Humble (see the same page) — so there is deliberately no distribution
+badge; Humble is the implicit baseline for every command on the site.
 
 Badges are defined in `docs/conf.py` and styled in `custom.css`.
 
@@ -188,24 +355,30 @@ What needs checking, and why.
 :::
 ```
 
-### Page template
+### Page templates
 
-Each main page aims to have: learning objectives · prerequisites · brief theory
-· a walkthrough · commands or code · a practical task · the expected result ·
-common mistakes · further reading · platform and version markers.
+Every one of the 13 top-level topics has its own overview page (what
+belongs to it, where ALeRT uses it, its subtopics as cards, content
+already present versus planned, required knowledge, related ALeRT
+repositories, verification status) — see `docs/platforms/index.md` or
+`docs/manipulation/index.md` for the current template.
+
+Individual tutorial subpages below a topic follow the older, still-current
+structure described in "Content levels" below.
 
 ## Contributing
 
 1. Branch from `main`. Name it `<scope>/<description>` — for example
    `jdoe/fix-nav2-params`.
 2. Build with `-W` before you push. CI will reject warnings.
-3. Keep the general/specific split: shared concepts in `course/`,
-   team-specific detail in `platforms/`, linking back rather than repeating.
+3. Keep the general/specific split: shared concepts on the general topic
+   pages (`docs/ros2/`, `docs/perception/`, etc.), team-specific detail
+   under `docs/platforms/`, linking back rather than repeating.
 4. Explain each thing once. If you find yourself writing something that already
    exists elsewhere, link to it instead.
 5. **Never invent** a command, topic name or package name. If you are unsure,
    add a `TODO-REVIEW` block rather than a plausible guess.
-6. Mark anything platform- or version-specific with a badge.
+6. Mark anything platform-, difficulty- or verification-specific with a badge.
 7. Update `CONTENT_REVIEW.md` if you add, remove or move substantial content.
 
 ### Verify technical claims
@@ -214,6 +387,61 @@ Check against primary sources before writing: the
 [ROS 2](https://docs.ros.org/), [Nav2](https://docs.nav2.org/),
 [OpenCV](https://docs.opencv.org/) and [MoveIt](https://moveit.picknik.ai/)
 documentation, and the README of whichever package you are describing.
+
+### Content levels
+
+Every tutorial subpage marks its content by genuine technical difficulty,
+using four badges — `{{ foundation }}` (needs no prior topic beyond its own
+Prerequisites section), `{{ intermediate }}` (builds directly on one or
+more Foundation topics), `{{ advanced }}` (a real capability, actively
+used by ALeRT, that takes more background or care) or `{{ research }}`
+(documented for completeness, not part of ALeRT's competition-ready path
+today) — defined in `docs/conf.py` as MyST substitutions and explained in
+`docs/reference/compatibility.md`. Check that a Foundation page's practical
+task is genuinely completable as described, not just plausible. See any
+existing page under `docs/ros2/` or `docs/perception/` for the pattern.
+
+Each tutorial subpage follows the same structure: Overview, Learning
+objectives, Prerequisites, Core concepts, Guided example, Practical task,
+Expected result, Verification, Common problems, Optional extensions,
+Advanced topics, Continue learning, Connection to the next topic. Write for
+a participant working through the material independently — no "tonight",
+"next week", "your facilitator provides X", or references to a live
+audience. Where a demonstration would traditionally be shown live, write it
+as a **Guided example** the reader can run themselves.
+
+**Continue learning** is every subpage's deep-dive section — deliberately
+more than a keyword list. Each topic inside it is a `:::{dropdown}` with:
+what it is, why it matters, what it needs, a concrete first task or
+mini-project, a way to check the result, an official further-reading link,
+and a **Next step / Intermediate / Advanced** label in its title. A topic
+big enough to need more than that (KiCad, Fusion) gets its own page instead,
+linked as a card from the parent topic. Keep every dropdown title on its
+own line, on a `(target-name)=` MyST anchor line if you need to link to it
+from elsewhere — dropdown titles are not headings and get no automatic
+anchor.
+
+### Testing beyond the build
+
+`sphinx-build -W` catches broken internal links, anchors and Markdown
+errors, but not what only a browser can check — JavaScript errors, mobile
+overflow, the light/dark toggle, search. `scripts/verify-site.py` covers
+that:
+
+```bash
+sphinx-build -b html docs docs/_build/html
+pip install playwright && playwright install chromium
+
+mkdir -p /tmp/site-serve/Learning-Robotics-Crash-Course
+cp -r docs/_build/html/. /tmp/site-serve/Learning-Robotics-Crash-Course/
+python3 -m http.server 8899 -d /tmp/site-serve &
+
+python3 scripts/verify-site.py
+```
+
+Playwright is intentionally **not** in `requirements.txt` — building the
+site itself should never need a browser download. Install it only when
+running this script.
 
 ## Security
 
@@ -254,28 +482,30 @@ See `SECURITY_REVIEW.md` for the full review of the source material.
 ## Sources and licenses
 
 Built from teaching material by the **MASKOR Institute, FH Aachen** and the
-Carologistics and ALeRT teams. Full attribution on the site's
-[Sources and licenses](docs/reference/sources.md) page and in `LICENSES.md`.
+**ALeRT** team. The public site deliberately carries no separate
+source/provenance chapter; full attribution and licensing detail lives in
+`LICENSES.md` in this repository instead.
 
 > **The content license has not yet been decided by the institute**, so this
 > repository ships no `LICENSE` file. See `LICENSES.md`.
 
 The Sphinx theme and all other tooling are installed from PyPI as declared
-dependencies; nothing is vendored. No files, images, CSS or JavaScript from the
-original tutorial sites are reused.
+dependencies; nothing is vendored. Historical photographs and diagrams from
+the former ALeRT Spot tutorial are reused under `docs/_static/images/`
+(`history/`, `historical-interface/`) where explicitly noted on the pages
+that use them — see `maintainers/historical-asset-migration.md` for
+provenance, checksum verification, and rights status (unestablished, same
+as the rest of this repository's source material) for every migrated
+image. No CSS or JavaScript from the original tutorial sites is reused.
 
 ## Deployment
 
 Pushes to `main` trigger `.github/workflows/pages.yml`, which installs
-dependencies, builds with `-W`, scans the output for secrets, checks links, and
-publishes to GitHub Pages.
-
-> [!NOTE]
-> **One-time manual setup required.** GitHub Pages must be set to deploy from
-> GitHub Actions before the first deployment can succeed:
->
-> **Settings → Pages → Build and deployment → Source → "GitHub Actions"**
->
-> This cannot be done from a workflow and has to be set once by someone with
-> admin rights on the repository. Until it is, the build job succeeds and the
-> deploy job fails.
+dependencies, builds with `-W`, scans the output for secrets, encrypts the
+site behind the password gate (see "Access protection" above), checks
+links, and publishes to GitHub Pages. GitHub Pages is enabled and live:
+<https://moritzschallenberg.github.io/Learning-Robotics-Crash-Course/> —
+every push to `main` redeploys it automatically. The one manual step is
+one-time: a repository owner must set the `STATICRYPT_PASSWORD` secret
+before the very first successful deploy under this workflow; after that,
+every subsequent push redeploys with no further manual action.

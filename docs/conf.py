@@ -1,13 +1,14 @@
 # Configuration file for the Sphinx documentation builder.
 #
-# Learning Robotics Crash Course -- MASKOR Institute, FH Aachen.
+# ALeRT Spot Tutorial -- ALeRT (Aachen Legged Rescue Team),
+# MASKOR Institute, FH Aachen.
 # Full reference: https://www.sphinx-doc.org/en/master/usage/configuration.html
 
 # -- Project information -----------------------------------------------------
 
-project = "Learning Robotics Crash Course"
-author = "MASKOR Institute, FH Aachen"
-copyright = "2026, MASKOR Institute, FH Aachen"
+project = "ALeRT Spot Tutorial"
+author = "ALeRT, MASKOR Institute, FH Aachen"
+copyright = "2026, ALeRT, MASKOR Institute, FH Aachen"
 version = "0.1"
 release = "0.1.0"
 
@@ -18,7 +19,12 @@ extensions = [
     "sphinx_copybutton",    # copy button on every code block
     "sphinx_design",        # cards, grids, dropdowns (used for solution blocks)
     "sphinx.ext.todo",
+    "sphinxcontrib.mermaid",  # architecture diagrams (Entwicklungsauftrag 9)
 ]
+
+# Pinned so a future sphinxcontrib-mermaid upgrade cannot silently change the
+# rendered diagram engine without a deliberate version bump here.
+mermaid_version = "11.12.1"
 
 # Content is authored in Markdown so that it stays easy to edit.
 source_suffix = {".md": "markdown", ".rst": "restructuredtext"}
@@ -45,11 +51,14 @@ myst_enable_extensions = [
 myst_heading_anchors = 3
 
 # ---------------------------------------------------------------------------
-# Platform / version badges.
+# Platform badges.
 #
-# Every platform- or distribution-specific instruction on this site must be
-# marked, so that readers never mix up a Humble guide with a Jazzy one.
-# Authors write e.g. `{{ carologistics }}` in Markdown; the substitution below
+# Every platform-specific instruction on this site must be marked, so that
+# readers never mistake a simulation-only instruction for one verified on
+# real hardware. The whole site is fixed to ROS 2 Humble (see
+# docs/reference/compatibility.md), so there is deliberately no distribution
+# badge -- Humble is the implicit baseline for every command on the site.
+# Authors write e.g. `{{ alert }}` in Markdown; the substitution below
 # expands to a styled badge (see _static/css/custom.css).
 # ---------------------------------------------------------------------------
 
@@ -58,20 +67,60 @@ def _badge(css_class: str, label: str) -> str:
     return f'<span class="lrcc-badge lrcc-badge--{css_class}">{label}</span>'
 
 
+def _level(css_class: str, label: str) -> str:
+    return f'<span class="lrcc-level lrcc-level--{css_class}">{label}</span>'
+
+
 myst_substitutions = {
-    "common": _badge("common", "COMMON"),
     "simulation": _badge("simulation", "SIMULATION"),
-    "carologistics": _badge("carologistics", "CAROLOGISTICS"),
     "alert": _badge("alert", "ALERT"),
-    "jazzy": _badge("jazzy", "ROS 2 JAZZY"),
-    "humble": _badge("humble", "ROS 2 HUMBLE"),
     "unverified": _badge("unverified", "UNVERIFIED"),
+    # ---------------------------------------------------------------------
+    # Difficulty-level badges (Entwicklungsauftrag 8, replacing the course-
+    # era Core/Optional/Common/Platform-specific scheme). These mark
+    # technical difficulty, not schedule priority -- a topic is Foundation
+    # because it needs no prior specialised knowledge, not because it is
+    # "session 1". Mark every heading or task with exactly one.
+    # ---------------------------------------------------------------------
+    "foundation": _level("foundation", "FOUNDATION"),
+    "intermediate": _level("intermediate", "INTERMEDIATE"),
+    "advanced": _level("advanced", "ADVANCED"),
+    "research": _level("research", "RESEARCH"),
+    # ---------------------------------------------------------------------
+    # "Try it on Spot" safety-level badges (Entwicklungsauftrag 5). Every
+    # Spot exercise scattered across this site's topics is marked with
+    # exactly one of these three, so a reader can tell at a glance whether
+    # it is safe to try alone.
+    # ---------------------------------------------------------------------
+    "spotsim": _level("spot-sim", "SIMULATION EXERCISE"),
+    "spotreadonly": _level("spot-readonly", "READ-ONLY ON PHYSICAL SPOT"),
+    "spotsupervised": _level("spot-supervised", "SUPERVISED PHYSICAL EXERCISE"),
+    # ---------------------------------------------------------------------
+    # Team-claim verification badges (Entwicklungsauftrag 6, extended in
+    # Entwicklungsauftrag 8). Every "how ALeRT uses this" statement is
+    # marked with exactly one: confirmed by the team's own repository or
+    # documentation ({{ documented }}), runnable in Webots
+    # ({{ simulation }}, already defined above), actually checked on
+    # running hardware ({{ hardwareverified }}), technically plausible but
+    # not checked ({{ unverified }}, already defined above), a specific
+    # call to actually check on real hardware before relying on it
+    # ({{ hwverificationrequired }}), a working but not yet
+    # production-ready approach ({{ experimental }}), no longer current but
+    # kept for context ({{ historical }}), or -- written as plain text,
+    # "Not documented", no badge needed -- no reliable information at all.
+    # Never use {{ hardwareverified }} from a passing simulation test.
+    # ---------------------------------------------------------------------
+    "documented": _badge("documented", "DOCUMENTED"),
+    "hardwareverified": _badge("hwverified", "HARDWARE-VERIFIED"),
+    "hwverificationrequired": _badge("hwverification-required", "HARDWARE VERIFICATION REQUIRED"),
+    "experimental": _badge("experimental", "EXPERIMENTAL"),
+    "historical": _badge("historical", "HISTORICAL"),
 }
 
 # -- Options for HTML output -------------------------------------------------
 
 html_theme = "sphinx_rtd_theme"
-html_title = "Learning Robotics Crash Course"
+html_title = "ALeRT Spot Tutorial"
 
 # Logo rights for the MASKOR / team logos found in the source material are not
 # established, so the site deliberately uses a text title instead of an image.
@@ -124,6 +173,10 @@ linkcheck_ignore = [
     r"https://(docs\.)?opencv\.org/.*",
     # Festo blocks automated requests to its product pages.
     r"https://www\.festo(-didactic)?\.com/.*",
+    # autodesk.com (not help.autodesk.com) answers 403 to automated requests;
+    # the links are correct and work in a browser, verified by hand on
+    # 2026-09-02.
+    r"https://www\.autodesk\.com/.*",
 ]
 
 # Sites that reject the default user agent.

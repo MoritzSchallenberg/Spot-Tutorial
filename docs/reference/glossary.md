@@ -1,8 +1,8 @@
 # Glossary
 
-{{ common }}
+{{ foundation }}
 
-Terms used throughout this course, in plain language.
+Terms used throughout this site, in plain language.
 
 ## A
 
@@ -10,12 +10,12 @@ Terms used throughout this course, in plain language.
 : A ROS 2 communication pattern for long-running tasks: a goal is sent,
   feedback arrives while it runs, a result comes at the end, and it can be
   cancelled. Navigation is an action. See
-  [session 2](../course/02-ros2.md#services-and-actions-briefly).
+  [ROS 2](../ros2/services-parameters-actions.md#try-it-yourself-actions).
 
 **AMCL**
 : Adaptive Monte Carlo Localization. Estimates the robot's pose on a known map
   using a particle filter. See
-  [session 5](../course/05-mapping-localization.md#localization-on-a-saved-map).
+  [Mapping and World Models](../mapping-world-models/index.md).
 
 **Ament**
 : The build system underlying ROS 2 packages. `ament_python` for Python
@@ -23,16 +23,15 @@ Terms used throughout this course, in plain language.
 
 **Ansible**
 : An automation tool that configures machines from declarative playbooks over
-  SSH. Used by Carologistics for fleet deployment. See
-  [session 8](../course/08-integration.md#deployment-with-ansible).
+  SSH. See [Integration, Diagnostics and Testing](../integration-testing/index.md).
 
 **AprilTag**
 : A family of fiducial markers, robust at distance and in poor lighting. See
-  [session 4](../course/04-perception.md#fiducial-markers).
+  [Perception](../perception/fiducial-markers.md).
 
 **ArUco**
 : A family of fiducial markers, built into OpenCV. See
-  [session 4](../course/04-perception.md#fiducial-markers).
+  [Perception](../perception/fiducial-markers.md).
 
 ## B
 
@@ -45,11 +44,11 @@ Terms used throughout this course, in plain language.
 **Behavior tree**
 : A tree of nodes, ticked repeatedly, that decides what a robot does. Nav2 uses
   one internally. See
-  [session 7](../course/07-autonomous-decisions.md#behavior-trees).
+  [Autonomous Decision-Making](../decision-making/mission-logic.md#behavior-trees-in-contrast).
 
 **Bringup**
 : The set of launch files that start a robot's software. See
-  [session 8](../course/08-integration.md).
+  [Integration, Diagnostics and Testing](../integration-testing/index.md).
 
 ## C
 
@@ -67,7 +66,7 @@ Terms used throughout this course, in plain language.
 **Costmap**
 : A grid where each cell holds the cost of driving there, from 0 to 254. Nav2
   keeps a global one and a local one. See
-  [session 6](../course/06-navigation.md#costmaps).
+  [Navigation and Exploration](../navigation-exploration/nav2-architecture-and-costmaps.md#how-it-works).
 
 **CUDA**
 : NVIDIA's platform for general-purpose GPU computation. Used to accelerate
@@ -82,12 +81,12 @@ Terms used throughout this course, in plain language.
 **Detection**
 : Finding *what* is in an image, in image coordinates. Distinct from
   localization. See
-  [session 4](../course/04-perception.md#detection-versus-localization).
+  [Perception](../perception/perception-pipeline.md#why-a-robot-needs-it).
 
 **Domain ID**
 : An integer that partitions a network into independent ROS 2 systems. Nodes
   only see each other if they share one. See
-  [Networking](../prerequisites/networking.md).
+  [Networking](../getting-started/networking.md).
 
 **Drift**
 : The gradual accumulation of error in odometry, which is never corrected by
@@ -110,7 +109,7 @@ Terms used throughout this course, in plain language.
 
 **Frame**
 : A coordinate system. Everything in ROS 2 that has a position is expressed in
-  some frame. See [session 3](../course/03-sensors-tf.md).
+  some frame. See [Sensors and Coordinate Frames](../sensors-frames/index.md).
 
 **Frontier exploration**
 : Autonomously exploring by repeatedly driving to the boundary between known
@@ -141,14 +140,14 @@ Terms used throughout this course, in plain language.
 **Inflation**
 : Expanding obstacles in a costmap by the robot's radius plus a margin, so the
   planner can treat the robot as a point. See
-  [session 6](../course/06-navigation.md#costmap-layers).
+  [Navigation and Exploration](../navigation-exploration/nav2-architecture-and-costmaps.md#how-it-works).
 
 ## L
 
 **Launch file**
 : A file that starts several nodes together, with parameters and remappings.
   YAML, XML or Python. See
-  [session 2](../course/02-ros2.md#launch-files).
+  {ref}`ROS 2 <launch-files>`.
 
 **LaserScan**
 : The message type for 2D laser data: an array of ranges plus the geometry
@@ -175,10 +174,6 @@ Terms used throughout this course, in plain language.
 **MoveIt**
 : The motion planning framework for manipulators in ROS.
 
-**MPS**
-: Modular Production Station. The Festo machines used in the RoboCup Logistics
-  League. {{ carologistics }}
-
 ## N
 
 **Namespace**
@@ -186,7 +181,7 @@ Terms used throughout this course, in plain language.
   colliding: `/robot1/scan` and `/robot2/scan`.
 
 **Nav2**
-: The ROS 2 navigation stack. See [session 6](../course/06-navigation.md).
+: The ROS 2 navigation stack. See [Navigation and Exploration](../navigation-exploration/index.md).
 
 **Node**
 : One program doing one job in a ROS 2 system.
@@ -237,40 +232,34 @@ Terms used throughout this course, in plain language.
 : Quality of Service. Policies governing how messages are delivered.
   Incompatible policies mean **no data flows, with no error message** — one of
   the most common problems in ROS 2. See
-  [session 3](../course/03-sensors-tf.md#when-rviz-shows-nothing).
+  [Sensors and Coordinate Frames](../sensors-frames/practical-exercise.md#common-problems).
 
 ## R
 
 **RAFCON**
 : A graphical state machine editor and execution engine from DLR. See
-  [session 7](../course/07-autonomous-decisions.md#rafcon).
+  [Autonomous Decision-Making](../decision-making/index.md).
 
 **rclpy**
 : The Python client library for ROS 2. (`rclcpp` is the C++ one.)
 
-**RCLL**
-: RoboCup Logistics League. {{ carologistics }}
-
 **Recovery behavior**
 : What Nav2 does when planning or control fails: clear the costmap, spin, back
   up, wait.
-
-**Refbox**
-: Referee box. Issues orders and scores a RoboCup game. {{ carologistics }}
 
 **Remapping**
 : Renaming a topic, service or node at launch time without changing code.
 
 **rosbag**
 : A recording of ROS 2 topics that can be replayed. See
-  [session 8](../course/08-integration.md#ros-bags).
+  [Integration, Diagnostics and Testing](../integration-testing/system-bringup-and-diagnostics.md).
 
 **RRL**
 : RoboCup Rescue League. {{ alert }}
 
 **RViz**
 : The 3D visualization tool for ROS. See
-  [session 3](../course/03-sensors-tf.md#rviz).
+  [Sensors and Coordinate Frames](../sensors-frames/index.md).
 
 ## S
 
@@ -284,7 +273,7 @@ Terms used throughout this course, in plain language.
 
 **SLAM Toolbox**
 : The standard 2D SLAM package for ROS 2. See
-  [session 5](../course/05-mapping-localization.md).
+  [Mapping and World Models](../mapping-world-models/index.md).
 
 **Sourcing**
 : Running a setup script in the current shell so ROS 2 can find packages.
@@ -297,7 +286,7 @@ Terms used throughout this course, in plain language.
 **State machine**
 : A model where the system is in exactly one state, with defined transitions
   between them. See
-  [session 7](../course/07-autonomous-decisions.md#finite-state-machines).
+  [Autonomous Decision-Making](../decision-making/mission-logic.md#finite-state-machines).
 
 **Subscriber**
 : The side of a topic that receives messages.
@@ -306,7 +295,7 @@ Terms used throughout this course, in plain language.
 
 **TF2**
 : The transform library. Tracks the relationships between coordinate frames and
-  converts between them. See [session 3](../course/03-sensors-tf.md).
+  converts between them. See [Sensors and Coordinate Frames](../sensors-frames/index.md).
 
 **Topic**
 : A named channel carrying messages of one type, from any number of publishers
@@ -339,4 +328,4 @@ Terms used throughout this course, in plain language.
 
 **YOLO**
 : "You Only Look Once" — a family of fast neural network object detectors. See
-  [session 4](../course/04-perception.md#neural-networks-yolo).
+  [Perception](../perception/object-detection.md).
