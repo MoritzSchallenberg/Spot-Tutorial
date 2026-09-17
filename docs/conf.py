@@ -44,6 +44,9 @@ myst_enable_extensions = [
     "deflist",          # definition lists
     "substitution",     # {{ platform_badges }}
     "attrs_inline",
+    "tasklist",         # - [ ] / - [x] checkboxes (Operator Checklist and others
+                         # used this syntax before the extension was enabled --
+                         # it rendered as literal "[ ]" text, not a checkbox)
 ]
 
 # Auto-generate anchors for headings up to level 3 so cross-page links to
