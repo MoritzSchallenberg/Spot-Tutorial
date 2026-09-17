@@ -1,7 +1,11 @@
-# ALeRT Advanced Robotics Tutorial
+# ALeRT Spot Tutorial
 
-A technical reference and tutorial site for **ALeRT** (Aachen Legged Rescue
-Team), the RoboCup Rescue League team at the **MASKOR Institute, FH Aachen**.
+A technical reference for the **ALeRT** (Aachen Legged Rescue Team) Spot
+system: a Boston Dynamics Spot quadruped fitted with a Kinova Gen3
+manipulator and Robotiq gripper, operated by the RoboCup Rescue League
+team at the **MASKOR Institute, FH Aachen**. It documents the real
+system's safety procedures, operating procedures, and hardware/software
+architecture, grounded in the team's own code and configuration.
 
 **Website:** <https://moritzschallenberg.github.io/Learning-Robotics-Crash-Course/>
 (repository name and Pages URL are unchanged for now — see
@@ -12,26 +16,26 @@ This is a long-lived technical reference, not a scheduled course: it
 carries no dates, sessions or event logistics — see
 [`maintainers/`](maintainers/) for anything organisational.
 
-> **Note:** the site was restructured from an earlier eight-module layout
-> into the 13-topic navigation described below (`feat/alert-advanced-
-> robotics-tutorial`). Twelve larger content-extension work packages
-> (a full BehaviorTree.CPP tutorial, a full MoveIt 2 path, a pick-and-place
-> project and others) are planned but not yet written — see
-> `maintainers/` for the roadmap.
+> **Note:** the site was pivoted from a general, topic-based robotics
+> reference ("ALeRT Advanced Robotics Tutorial") into a Spot-specific
+> system tutorial (Entwicklungsauftrag 9, `feat/alert-spot-tutorial`).
+> The former 13 independent topics still exist as content (see
+> "Project structure" below) but are no longer the site's primary
+> navigation — see `maintainers/spot-tutorial-migration-report.md` for
+> the full account of what moved where and why.
 
 ## Goal
 
-Explain the robotics, ROS 2 and ALeRT-specific systems this team's
-software is built on, as a reference anyone can consult — not only
-newcomers working through it top to bottom. General fundamentals are
-explained **once**; ALeRT-specific commands and systems live on separate
-platform pages that link back to them, each one tied to a real, current
-ALeRT repository wherever possible.
+Document the ALeRT Spot system itself — safety, operation, and
+architecture — grounded in the team's current code and deployment
+configuration (see `maintainers/spot-code-audit.md`), not in memory or
+convention. Every claim carries an explicit verification level; nothing
+is asserted as confirmed on real hardware without a test record backing
+it.
 
-**Audience:** anyone working on or learning from ALeRT's software, with
-some technical grounding (Python is enough) and comfort with a terminal.
-No prior ROS 2 experience is needed, and no physical robot — most topics
-can be worked through in simulation.
+**Audience:** anyone preparing to operate the physical Spot system, or
+anyone who wants to understand how it is built, from team members to
+anyone consulting a specific topic as a reference.
 
 **ALeRT on GitHub:** <https://github.com/RRL-ALeRT> — the team's public
 repositories this site's topics link back to throughout.
@@ -40,29 +44,26 @@ repositories this site's topics link back to throughout.
 
 ## Current structure
 
-Thirteen top-level topics, each with its own overview page:
+Eleven top-level sections, following the real Spot system rather than
+independent topics:
 
-| Topic | Focus |
+| Section | Focus |
 |---|---|
-| Getting Started | Linux, Git, networking |
-| ROS 2 | Nodes, topics, packages, installation |
-| ALeRT Platforms and Safety | Spot, hardware design (KiCad, Fusion), safety levels |
-| Simulation | Webots, the ALeRT Spot simulation, simulation time |
-| Sensors and Coordinate Frames | Sensor data placed in space, TF2 |
-| Perception | Marker/object detection |
-| Mapping and World Models | Build a map, occupancy grids, 3D mapping |
-| Localization, Navigation and Exploration | AMCL, Nav2, autonomous goals |
-| Robot Manipulation | Arm fundamentals, MoveIt 2 (overview; full tutorials planned) |
-| Autonomous Decision-Making | State machines, behavior trees, planners |
-| Integration, Diagnostics and Testing | Start and debug the whole system |
-| Rescue Applications and Projects | Worked examples combining several topics |
+| About ALeRT and Spot | Team and RoboCup Rescue League history |
+| Safety and Prerequisites | Stop states, E-stops, operating area, required knowledge |
+| Operating Spot | Power-on through shutdown, driving, manipulator control, recovery |
+| System Architecture | Hardware, network, software, startup order, ROS 2 interfaces, frames, data flow |
+| Sensors and Perception | Cameras, LiDAR, IMU, TF2, marker/object detection |
+| Navigation and Mapping | Occupancy grids, SLAM, Nav2-style planning and control |
+| Manipulator and MoveIt | Arm fundamentals, MoveIt 2, grippers |
+| Autonomous Behaviors | State machines, behavior trees, worked mission examples |
+| Deployment and Configuration | Simulation, the platform/simulation reference, hardware-design tooling |
+| Diagnostics and Testing | Startup order, configuration, systematic debugging |
 | Reference | Cheat sheet, supported environment, glossary |
 
-Simulation and ALeRT/Spot both run on the same fixed toolchain, **Ubuntu
-22.04 LTS and ROS 2 Humble** (`docs/reference/compatibility.md`), unless a
-specific ALeRT repository is documented to need something else. There is
-no distribution choice on this site by default; every command assumes
-Humble unless stated otherwise.
+The system runs on **Ubuntu 22.04 LTS and ROS 2 Humble**
+(`docs/reference/compatibility.md`), unless a specific ALeRT repository
+is documented to need something else.
 
 ## Building the site locally
 
@@ -136,42 +137,47 @@ deployed; see [Learner-only site](#learner-only-site-what-is-and-is-not-publishe
 below for what that guarantees.
 
 ```text
-.github/workflows/pages.yml   Build, secret-scan and deploy to GitHub Pages
+.github/workflows/pages.yml   Build, secret-scan, password-gate and deploy
 
 docs/                          <-- published website; nothing else is built
-  conf.py                     Sphinx configuration, incl. badges
-  index.md                    Landing page, one toctree per topic
+  conf.py                     Sphinx configuration, incl. badges, mermaid
+  index.md                    Landing page, one toctree per Section 6 nav item
 
-  getting-started/             Linux, Git, networking
-  ros2/                        Nodes, topics, packages, installation
-  platforms/                   ALeRT Platforms and Safety
-    spot/                      ALeRT / Spot platform reference
-    hardware-design/           KiCad and Fusion tutorials
-  simulation/                  Webots, the ALeRT Spot simulation
-  sensors-frames/               Sensors and Coordinate Frames (TF2, RViz)
-  perception/                  Core page + 4 deeper chapters
-  mapping-world-models/         Mapping and World Models
-  navigation-exploration/       Localization, Navigation and Exploration
-  manipulation/                 Robot Manipulation (overview page)
-  decision-making/              Autonomous Decision-Making
-  integration-testing/          Integration, Diagnostics and Testing
-  rescue-projects/              Rescue Applications and Projects
-                                (autonomous-rescue-mission.md is the
-                                worked-example mission)
+  about/                       About ALeRT and Spot (history, migrated from
+                                the former ALeRT Spot tutorial)
+  safety/                      Safety and Prerequisites
+  operating/                   Operating Spot (step-by-step procedures)
+  architecture/                System Architecture (hardware, network,
+                                software, startup, ROS 2 interfaces, TF,
+                                data flow -- incl. Mermaid diagrams)
 
-  reference/
-    ros2-cheatsheet.md        Commands, grouped by intent
-    compatibility.md          "Supported environment": the fixed toolchain
-                              (Ubuntu 22.04 / ROS 2 Humble), per-path
-                              versions, and the difficulty/verification
-                              badge legend
-    glossary.md
+  sensors-and-perception/      Hub page linking sensors-frames/ + perception/
+  navigation-and-mapping/      Hub page linking mapping-world-models/ +
+                                navigation-exploration/
+  manipulation/                Manipulator and MoveIt
+  autonomous-behaviors/        Hub page linking decision-making/ +
+                                rescue-projects/
+  deployment-and-configuration/ Hub page linking simulation/ + platforms/
+  integration-testing/         Diagnostics and Testing
+  reference/                   Cheat sheet, supported environment, glossary
+
+  getting-started/, ros2/, simulation/, platforms/ (incl. spot/,
+  hardware-design/), sensors-frames/, perception/, mapping-world-models/,
+  navigation-exploration/, decision-making/, rescue-projects/
+                                Pre-existing topic content (Entwicklungsauftrag
+                                8), kept at its original path and linked into
+                                the new navigation above rather than moved --
+                                docs/platforms/spot/index.md alone is
+                                cross-linked from ~30 other pages
 
   _static/
     css/custom.css            Theme layer, badges, light/dark palette
     js/color-mode.js          Light/dark toggle (name must not be theme.js,
                               which would shadow the RTD theme's own script)
     images/diagrams/          Original SVG diagrams
+    images/history/           Migrated historical photos (About section)
+    images/historical-interface/  Migrated "Historical interface" screenshots
+                                   (Operating Spot section)
   _extra/.nojekyll
 
 maintainers/                   NOT built, NOT deployed, NOT in any toctree
@@ -179,6 +185,13 @@ maintainers/                   NOT built, NOT deployed, NOT in any toctree
   content-audit.md             Audit of the archived Spot-tutorial source
   repository-audit.md          Live inventory of public RRL-ALeRT repos
   rebrand-followups.md         What a future repo transfer would need
+  spot-source-audit.md         Local source inventory (Entwicklungsauftrag 9)
+  spot-security-audit.md       Credential/PII/network-data audit, categories only
+  spot-code-audit.md           Full Spot code audit: repos, ROS packages,
+                              runtime components, interfaces, TF frames
+  historical-asset-migration.md  Provenance/checksum table for every
+                              migrated image
+  spot-tutorial-migration-report.md  Entwicklungsauftrag 9 final report
 
 examples/                      Real, colcon-buildable starter packages
   ros2_turtlesim/               ROS 2 topic's practical task
@@ -277,6 +290,20 @@ being part of the website either.
     below. Items 1–10 above describe decisions made against the earlier
     `course/`-based layout and are kept here as a historical record; the
     "Project structure" tree above is the current, authoritative one.
+13. **Pivoted the site to "ALeRT Spot Tutorial"** (Entwicklungsauftrag 9):
+    new primary navigation (About ALeRT and Spot, Safety and
+    Prerequisites, Operating Spot, System Architecture, then the
+    remaining topics) replacing the 13 independent topics as the site's
+    top-level structure. The 13 topics themselves were kept at their
+    existing paths rather than physically moved (see "Project structure"
+    above) and are now linked into the new navigation instead of being
+    top-level entries in their own right. History content was migrated
+    from the former ALeRT Spot tutorial; safety and operating procedures
+    were rewritten from the current Spot code rather than translated
+    from the old material; a Spot-specific password gate
+    (see "Access protection") replaced the earlier plan to add one
+    "once implemented". Full account:
+    `maintainers/spot-tutorial-migration-report.md`.
 
 ## Editing the content
 
@@ -463,13 +490,22 @@ source/provenance chapter; full attribution and licensing detail lives in
 > repository ships no `LICENSE` file. See `LICENSES.md`.
 
 The Sphinx theme and all other tooling are installed from PyPI as declared
-dependencies; nothing is vendored. No files, images, CSS or JavaScript from the
-original tutorial sites are reused.
+dependencies; nothing is vendored. Historical photographs and diagrams from
+the former ALeRT Spot tutorial are reused under `docs/_static/images/`
+(`history/`, `historical-interface/`) where explicitly noted on the pages
+that use them — see `maintainers/historical-asset-migration.md` for
+provenance, checksum verification, and rights status (unestablished, same
+as the rest of this repository's source material) for every migrated
+image. No CSS or JavaScript from the original tutorial sites is reused.
 
 ## Deployment
 
 Pushes to `main` trigger `.github/workflows/pages.yml`, which installs
-dependencies, builds with `-W`, scans the output for secrets, checks links, and
-publishes to GitHub Pages. GitHub Pages is enabled and live:
+dependencies, builds with `-W`, scans the output for secrets, encrypts the
+site behind the password gate (see "Access protection" above), checks
+links, and publishes to GitHub Pages. GitHub Pages is enabled and live:
 <https://moritzschallenberg.github.io/Learning-Robotics-Crash-Course/> —
-every push to `main` redeploys it automatically, no manual step needed.
+every push to `main` redeploys it automatically. The one manual step is
+one-time: a repository owner must set the `STATICRYPT_PASSWORD` secret
+before the very first successful deploy under this workflow; after that,
+every subsequent push redeploys with no further manual action.
