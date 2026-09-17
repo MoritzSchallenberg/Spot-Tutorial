@@ -18,6 +18,18 @@ byte-identical copies in the source material (a top-level copy and the
 `..._files/` copy embedded by the page) — only one copy of each was
 migrated.
 
+**Addendum (Entwicklungsauftrag 10, Section 6):** the 24 originals in
+`docs/_static/images/history/` are unchanged from the above. A
+separate, derived set of JPEG thumbnails (max width 480px, quality 82,
+generated with Pillow from the untouched originals, never overwriting
+them) was added at `docs/_static/images/history/thumbs/` for use only
+on `about/historical-gallery.md`, to cut that page's image payload
+from ~20 MB to under 1 MB of initially-loaded thumbnails (each also
+`loading="lazy"`, so only thumbnails actually scrolled into view are
+fetched at all). Every thumbnail links through to its unmodified
+original at full resolution. This does not change any original file's
+checksum.
+
 `wifi.png`, `kinova_web.png`, and `kinova_faults.png` (from the old
 Spot Startup page) were **not** on the task's requested image list and
 were excluded per `maintainers/spot-security-audit.md`: they show a

@@ -90,12 +90,14 @@ response `Unverified on hardware`.
 :width: 80%
 :align: center
 
-**Historical interface.** A Steam Deck manipulator-control schematic
-from the former ALeRT tutorial. As with [Driving
-Spot](driving-spot.md#step-1-select-the-base-control-mode)'s control
-schematic, this describes the Steam Deck's own native controls, not
-the DualSense mapping found in the current code. Kept for historical
-reference only.
+**Historical context:** a Steam Deck manipulator-control schematic
+from the former ALeRT tutorial. **Current implementation:** as with
+[Driving Spot](driving-spot.md#step-1-select-the-base-control-mode)'s
+control schematic, this describes the Steam Deck's own native
+controls, not the DualSense mapping found in the current code.
+**Hardware verification required:** yes — same caveat as the driving
+schematic; confirm the active controller before relying on this
+mapping.
 :::
 
 Stop condition: Any unexpected motion, or the input-lock condition

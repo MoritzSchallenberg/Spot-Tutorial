@@ -38,13 +38,14 @@ asserted here.
 :width: 80%
 :align: center
 
-**Historical interface.** A Steam Deck control schematic from the
-former ALeRT tutorial. This describes the Steam Deck's own native
-controls, which do not match the DualSense mapping found in the
-current code (`read_dualsense.py`) — the two are different controller
-types. Kept for historical reference only; do not treat this as the
-current control scheme without confirming which controller and mapping
-are actually in use.
+**Historical context:** a Steam Deck control schematic from the former
+ALeRT tutorial. **Current implementation:** the actively maintained
+teleop code (`read_dualsense.py`) targets a Sony DualSense controller
+with a different button/stick mapping entirely — the two controllers
+are not interchangeable, and this schematic does not describe the
+current code path. **Hardware verification required:** yes — confirm
+which controller (Steam Deck, DualSense, or both) is actually in use
+in a given session before relying on either mapping.
 :::
 
 Stop condition: Confirm mode before commanding any motion.

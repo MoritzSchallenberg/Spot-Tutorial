@@ -41,10 +41,14 @@ available; otherwise consult a trained team member.
 :width: 70%
 :align: center
 
-**Historical interface.** A labeled photograph from the former ALeRT
+**Historical context:** a labeled photograph from the former ALeRT
 tutorial showing the power button and motor cut-off button locations.
-Not independently reconfirmed against the current hardware in this
-documentation pass.
+**Current implementation:** no current code or configuration describes
+Spot's physical power panel (it is outside the ROS 2 stack this site
+otherwise audits), so there is nothing in the codebase to compare this
+photograph against. **Hardware verification required:** yes — confirm
+the button locations shown here are still correct on the physical unit
+before relying on this photograph alone.
 :::
 
 ### Step 2: Power on the operator device and connect

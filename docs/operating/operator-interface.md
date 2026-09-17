@@ -73,12 +73,16 @@ against a live screenshot in this documentation pass.
 :width: 90%
 :align: center
 
-**Historical interface.** RViz and the rqt dashboard from the former
-ALeRT tutorial. The tab labels, Estop slider, Start button, and battery
-display visible here match the literal strings found in the current
-`spot_estop_rqt.py` source, which is why this screenshot is kept
-despite not being independently reconfirmed against a live session in
-this documentation pass.
+**Historical context:** RViz and the rqt dashboard from the former
+ALeRT tutorial. **Current implementation:** the tab labels ("BASIC",
+"PLUS", "BW", "EXP", "NAV"), the "Estop" slider, the "Start" button,
+and the battery-remaining display visible here all match literal
+strings still present in the current `spot_estop_rqt.py` source —
+unusually strong agreement for a historical screenshot, which is why
+it is kept rather than only described. **Hardware verification
+required:** yes — the code match confirms these controls exist as
+described, not that the on-screen layout is still pixel-identical
+today.
 :::
 
 ## RViz
