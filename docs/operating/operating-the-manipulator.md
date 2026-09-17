@@ -29,7 +29,8 @@ Spot driver running; manipulator not yet started.
 
 Location: the operator dashboard, on the Operator Station, which
 starts the driver process on the Manipulator Controller (the Kinova
-Gen3's own embedded controller, reached over TCP).
+Gen3's own embedded controller, reached over TCP). The launched
+package (`kortex_bringup`) lives in the `man_ws` workspace.
 
 Type: not read-only (starts the driver and clears faults), no motion
 commanded.
@@ -56,7 +57,8 @@ Troubleshooting](recovery-and-troubleshooting.md#manipulator-fault).
 ### Step 2: Start MoveIt
 
 Location: the operator dashboard, on the Operator Station, which
-starts `move_group` on the Robot Computer.
+starts `move_group` on the Robot Computer. The launched package
+(`spot_gen3_moveit`) lives in the `man_ws` workspace.
 
 Type: not read-only (starts the planning server), no motion commanded.
 

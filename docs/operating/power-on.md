@@ -116,7 +116,9 @@ robot computer directly — not read-only).
 ### Step 4: Arm the software E-stop endpoint
 
 Location: the operator dashboard, on the Operator Station, which
-starts processes on the Robot Computer via the tmux API.
+starts processes on the Robot Computer via the tmux API. The started
+process (`spot_estop.py`) belongs to the `spot_driver_plus` package in
+the `spot_ws` workspace — source: `alert_dashboard_rqt/window_commands.py`.
 
 Type: not read-only (starts background processes), no robot motion
 commanded.
@@ -143,7 +145,9 @@ consult a trained team member before proceeding.
 ### Step 5: Start the Spot driver
 
 Location: the operator dashboard, on the Operator Station, which
-starts the driver process on the Robot Computer.
+starts the driver process on the Robot Computer, in the `spot_ws`
+workspace (`spot_driver_plus` package, which itself includes the
+`spot_driver` package's own launch file).
 
 Type: not read-only (starts the main driver), but starting the driver
 does not itself command movement.
