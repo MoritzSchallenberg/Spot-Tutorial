@@ -812,8 +812,29 @@ footer span {
 }
 
 @media print {
+  /* The RTD theme's own print stylesheet (theme.css) resets shadows and
+     page-break rules but never accounts for the sidebar nav itself -- left
+     as-is, it prints in full and the content column keeps its 300px
+     left margin reserved for it, so the page prints as a narrow column of
+     text jammed against a large blank gutter (or, on some browsers, the
+     nav literally overlapping the content). This is most noticeable on
+     pages meant to be printed and taken into the field, like the Operator
+     Checklist. */
   .lrcc-theme-switcher,
-  .wy-nav-side {
-    display: none;
+  .wy-nav-side,
+  .wy-nav-top,
+  .wy-breadcrumbs,
+  .rst-footer-buttons,
+  .rst-versions {
+    display: none !important;
+  }
+
+  .wy-nav-content-wrap {
+    margin-left: 0 !important;
+  }
+
+  .wy-nav-content {
+    max-width: none !important;
+    padding: 0 !important;
   }
 }
