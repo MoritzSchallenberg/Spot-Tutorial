@@ -389,6 +389,264 @@ def check_only_new_substitutions_used() -> list[str]:
     return failures
 
 
+# ---------------------------------------------------------------------------
+# Entwicklungsauftrag 9 (ALeRT Spot Tutorial pivot) checks, Section 16.
+# ---------------------------------------------------------------------------
+
+EXPECTED_TITLE = "ALeRT Spot Tutorial"
+
+EXPECTED_NAV_CAPTIONS = [
+    "About ALeRT and Spot",
+    "Safety and Prerequisites",
+    "Operating Spot",
+    "System Architecture",
+    "Sensors and Perception",
+    "Navigation and Mapping",
+    "Manipulator and MoveIt",
+    "Autonomous Behaviors",
+    "Deployment and Configuration",
+    "Diagnostics and Testing",
+    "Reference",
+]
+
+HISTORY_PAGES = [
+    "about/index.md",
+    "about/alert-and-spot.md",
+    "about/robocup-rescue.md",
+    "about/rescue-challenges.md",
+    "about/historical-gallery.md",
+]
+
+OPERATING_PAGES = [
+    "operating/index.md",
+    "operating/system-preparation.md",
+    "operating/power-on.md",
+    "operating/operator-interface.md",
+    "operating/driving-spot.md",
+    "operating/operating-the-manipulator.md",
+    "operating/safe-shutdown.md",
+    "operating/recovery-and-troubleshooting.md",
+]
+
+ARCHITECTURE_PAGES = [
+    "architecture/index.md",
+    "architecture/hardware-overview.md",
+    "architecture/computers-and-network.md",
+    "architecture/software-components.md",
+    "architecture/startup-and-launch-sequence.md",
+    "architecture/ros2-interfaces.md",
+    "architecture/coordinate-frames.md",
+    "architecture/data-flow.md",
+]
+
+# Exact strings from the task's Section 16 banned-term list. Case-sensitive
+# where the task gave a specific casing (module/session numbers, product
+# names); case-insensitive matching is used for the search itself so a
+# rephrased heading doesn't slip past by capitalisation alone.
+_BANNED_TERMS = (
+    "learning robotics crash course",
+    "alert advanced robotics tutorial",
+    "crash course",
+    "module 1",
+    "module 2",
+    "module 3",
+    "module 4",
+    "module 5",
+    "module 6",
+    "module 7",
+    "module 8",
+    "85 min",
+    "90 min",
+    "core learning path",
+    "hackathon",
+    "capstone",
+    "carologistics",
+    "robotino",
+    "rcll",
+    "mps",
+    "smart manufacturing",
+    "thanks to max",
+    "credentials are saved",
+)
+
+# "MPS" and "RCLL" are short enough to false-positive inside ordinary words
+# (timestamps, "jumps", ...) -- match them as whole words only. The rest are
+# specific enough as substrings.
+_WHOLE_WORD_TERMS = {"mps", "rcll"}
+_WHOLE_WORD_RE = {t: re.compile(rf"\b{re.escape(t)}\b", re.IGNORECASE) for t in _WHOLE_WORD_TERMS}
+
+# Historical year mentions (e.g. "RRL2023", "RoboCup 2001") are allowed --
+# only the specific old-course-era phrases above are banned.
+
+_PRIVATE_IP_RE = re.compile(
+    r"\b(?:10\.\d{1,3}\.\d{1,3}\.\d{1,3}"
+    r"|172\.(?:1[6-9]|2\d|3[0-1])\.\d{1,3}\.\d{1,3}"
+    r"|192\.168\.\d{1,3}\.\d{1,3})\b"
+)
+
+MAINTAINERS_MARKER = "Not part of the published website"
+
+
+def check_new_title() -> list[str]:
+    failures: list[str] = []
+    conf_py = (REPO_ROOT / "docs" / "conf.py").read_text(encoding="utf-8")
+    for field in ('project = "', 'html_title = "'):
+        if f'{field}{EXPECTED_TITLE}"' not in conf_py:
+            failures.append(f"docs/conf.py: {field.strip(' =\"')} is not {EXPECTED_TITLE!r}")
+    index_md = (DOCS / "index.md").read_text(encoding="utf-8")
+    first_heading = next((l for l in index_md.splitlines() if l.startswith("# ")), "")
+    if first_heading.strip() != f"# {EXPECTED_TITLE}":
+        failures.append(f"docs/index.md: first heading is {first_heading!r}, expected '# {EXPECTED_TITLE}'")
+    return failures
+
+
+def check_full_navigation() -> list[str]:
+    failures: list[str] = []
+    index_md = REPO_ROOT / "docs" / "index.md"
+    text = index_md.read_text(encoding="utf-8")
+    captions = re.findall(r":caption:\s*(.+)", text)
+    if captions != EXPECTED_NAV_CAPTIONS:
+        failures.append(
+            f"docs/index.md toctree captions {captions} do not match the expected "
+            f"Section 6 navigation {EXPECTED_NAV_CAPTIONS}"
+        )
+    return failures
+
+
+def _check_pages_present(pages: list[str], label: str) -> list[str]:
+    failures: list[str] = []
+    for rel in pages:
+        if not (DOCS / rel).is_file():
+            failures.append(f"{label}: expected page missing: docs/{rel}")
+    return failures
+
+
+def check_history_section_present() -> list[str]:
+    return _check_pages_present(HISTORY_PAGES, "history section")
+
+
+def check_operating_pages_present() -> list[str]:
+    return _check_pages_present(OPERATING_PAGES, "operating section")
+
+
+def check_architecture_pages_present() -> list[str]:
+    return _check_pages_present(ARCHITECTURE_PAGES, "architecture section")
+
+
+_MD_IMAGE_RE = re.compile(r"!\[([^\]]*)\]\(([^)]+)\)")
+# Figure/card option lines may be indented when the directive sits inside a
+# list item (e.g. a bullet's own nested figure) -- allow leading whitespace
+# before the ":" rather than anchoring to column 0.
+_FIGURE_BLOCK_RE = re.compile(r":{3,4}\{figure\}[^\n]*\n((?:[ \t]*:.*\n)*)", re.MULTILINE)
+_GRID_CARD_IMG_RE = re.compile(
+    r":{3,4}\{grid-item-card\}[^\n]*\n((?:[ \t]*:.*\n)*)", re.MULTILINE
+)
+
+
+def check_image_alt_text() -> list[str]:
+    failures: list[str] = []
+    for p in all_md_files():
+        text = p.read_text(encoding="utf-8", errors="ignore")
+        rel = p.relative_to(REPO_ROOT)
+
+        for m in _MD_IMAGE_RE.finditer(text):
+            alt, target = m.group(1), m.group(2)
+            if target.startswith(("http://", "https://")):
+                continue
+            if not alt.strip():
+                failures.append(f"{rel}: image {target!r} has empty alt text")
+
+        for m in _FIGURE_BLOCK_RE.finditer(text):
+            options = m.group(1)
+            if ":alt:" not in options:
+                failures.append(f"{rel}: a {{figure}} directive has no :alt: option")
+
+        for m in _GRID_CARD_IMG_RE.finditer(text):
+            options = m.group(1)
+            if ":img-top:" in options and ":img-alt:" not in options:
+                failures.append(f"{rel}: a grid-item-card with :img-top: has no :img-alt: option")
+    return failures
+
+
+def check_banned_terms() -> list[str]:
+    failures: list[str] = []
+    for p in all_md_files():
+        text = strip_code_fences(p.read_text(encoding="utf-8", errors="ignore"))
+        lower = text.lower()
+        rel = p.relative_to(REPO_ROOT)
+        for term in _BANNED_TERMS:
+            if term in _WHOLE_WORD_TERMS:
+                if _WHOLE_WORD_RE[term].search(text):
+                    failures.append(f"{rel}: banned term found: {term!r}")
+            elif term in lower:
+                failures.append(f"{rel}: banned term found: {term!r}")
+    return failures
+
+
+def check_no_sensitive_network_data() -> list[str]:
+    """Scoped to the Spot-specific sections this task adds (about/, safety/,
+    operating/, architecture/), not the whole site -- docs/getting-started/
+    and docs/ros2/ predate this task and legitimately use generic private-IP
+    examples (e.g. 192.168.1.100 to illustrate subnetting) that have nothing
+    to do with the real Spot deployment's actual network."""
+    failures: list[str] = []
+    scoped_dirs = ("about", "safety", "operating", "architecture")
+    for p in all_md_files():
+        rel = p.relative_to(REPO_ROOT)
+        if rel.parts[1] not in scoped_dirs:  # rel = docs/<dir>/...
+            continue
+        text = p.read_text(encoding="utf-8", errors="ignore")
+        for m in _PRIVATE_IP_RE.finditer(text):
+            failures.append(f"{rel}: private IP address literal found: {m.group(0)}")
+    return failures
+
+
+def check_maintainers_not_public() -> list[str]:
+    """maintainers/ must never be reachable from docs/ (source) or leak into
+    a build (docs/_build/html), and must not appear in Sphinx's own search
+    index if a build exists."""
+    failures: list[str] = []
+    for p in all_md_files():
+        text = p.read_text(encoding="utf-8", errors="ignore")
+        if re.search(r"\]\([^)]*\.\./maintainers/", text) or re.search(r"\]\(/?maintainers/", text):
+            failures.append(f"{p.relative_to(REPO_ROOT)}: links directly into maintainers/, which is not published")
+
+    build_html = DOCS / "_build" / "html"
+    if build_html.is_dir():
+        for html_file in build_html.rglob("*.html"):
+            if MAINTAINERS_MARKER in html_file.read_text(encoding="utf-8", errors="ignore"):
+                failures.append(
+                    f"{html_file.relative_to(REPO_ROOT)}: contains the maintainers-only marker "
+                    f"{MAINTAINERS_MARKER!r} -- an internal document appears to have leaked into the build"
+                )
+        search_index = build_html / "searchindex.js"
+        if search_index.is_file() and "spot-code-audit" in search_index.read_text(encoding="utf-8", errors="ignore"):
+            failures.append("docs/_build/html/searchindex.js references an internal maintainers document")
+    return failures
+
+
+def check_banned_terms_in_build() -> list[str]:
+    """Same banned-term list as check_banned_terms(), applied to the built
+    HTML if one exists (Section 16 requires both source and built-HTML
+    coverage). Skipped, not failed, if no build is present -- run
+    sphinx-build first for full coverage, as the standard test sequence
+    (Section 17) does."""
+    failures: list[str] = []
+    build_html = DOCS / "_build" / "html"
+    if not build_html.is_dir():
+        return failures
+    for html_file in build_html.rglob("*.html"):
+        if ".doctrees" in html_file.parts:
+            continue
+        lower = html_file.read_text(encoding="utf-8", errors="ignore").lower()
+        for term in _BANNED_TERMS:
+            if term in _WHOLE_WORD_TERMS:
+                continue  # whole-word regex not worth re-running over rendered HTML markup
+            if term in lower:
+                failures.append(f"{html_file.relative_to(REPO_ROOT)}: banned term found in built HTML: {term!r}")
+    return failures
+
+
 def main() -> int:
     all_failures: list[str] = []
 
@@ -402,6 +660,16 @@ def main() -> int:
     all_failures.extend(check_no_stale_removed_dir_links())
     all_failures.extend(check_no_carologistics_content())
     all_failures.extend(check_no_instructor_page())
+    all_failures.extend(check_new_title())
+    all_failures.extend(check_full_navigation())
+    all_failures.extend(check_history_section_present())
+    all_failures.extend(check_operating_pages_present())
+    all_failures.extend(check_architecture_pages_present())
+    all_failures.extend(check_image_alt_text())
+    all_failures.extend(check_banned_terms())
+    all_failures.extend(check_no_sensitive_network_data())
+    all_failures.extend(check_maintainers_not_public())
+    all_failures.extend(check_banned_terms_in_build())
     all_failures.extend(check_no_duplicate_video_urls())
     all_failures.extend(check_video_cards_carry_metadata())
     all_failures.extend(check_only_new_substitutions_used())
