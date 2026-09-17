@@ -185,7 +185,68 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
+
+  smoke-test:
+    name: Smoke test the deployed site
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify the live site is up and gated
+        # GitHub Pages can take a short while to actually start serving a
+        # fresh deployment even after the deploy step reports success, so
+        # this retries with a fixed, bounded budget (10 attempts x 10s =
+        # 100s max) rather than looping indefinitely or trusting the first
+        # response.
+        env:
+          SITE_URL: ${{ needs.deploy.outputs.page_url }}
+        run: |
+          set -e
+          echo "Testing $SITE_URL"
+
+          status="000"
+          for i in $(seq 1 10); do
+            status=$(curl -fsSL -o /tmp/homepage.html -w "%{http_code}" "$SITE_URL" || echo "000")
+            if [ "$status" = "200" ]; then
+              break
+            fi
+            echo "Attempt $i/10: homepage returned $status, retrying in 10s..."
+            sleep 10
+          done
+          if [ "$status" != "200" ]; then
+            echo "::error::Homepage did not return 200 after 10 attempts (last status: $status)"
+            exit 1
+          fi
+          echo "OK: homepage returned 200"
+
+          if ! grep -qi 'staticrypt\|protected page' /tmp/homepage.html; then
+            echo "::error::Homepage does not show the StatiCrypt password gate"
+            exit 1
+          fi
+          echo "OK: password gate is present on the homepage"
+
+          sub_status=$(curl -fsSL -o /tmp/subpage.html -w "%{http_code}" "${SITE_URL}safety/operator-checklist.html" || echo "000")
+          if [ "$sub_status" != "200" ]; then
+            echo "::error::Direct subpage request failed with status $sub_status"
+            exit 1
+          fi
+          if ! grep -qi 'staticrypt\|protected page' /tmp/subpage.html; then
+            echo "::error::Direct subpage access is not gated -- it may be serving real content unprotected"
+            exit 1
+          fi
+          echo "OK: a direct subpage request is gated, not just the homepage"
+
+          css_status=$(curl -fsSL -o /dev/null -w "%{http_code}" "${SITE_URL}_static/css/custom.css" || echo "000")
+          js_status=$(curl -fsSL -o /dev/null -w "%{http_code}" "${SITE_URL}_static/js/color-mode.js" || echo "000")
+          if [ "$css_status" != "200" ] || [ "$js_status" != "200" ]; then
+            echo "::error::Static assets failed to load (custom.css=$css_status color-mode.js=$js_status)"
+            exit 1
+          fi
+          echo "OK: static CSS and JavaScript files load"
+
+          echo "Smoke test passed."
