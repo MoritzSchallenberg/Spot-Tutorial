@@ -4,19 +4,35 @@
 
 Manually drive Spot's base and switch between operating modes.
 
+## Required supervision
+
+Continuous supervision by a trained team member with the physical
+E-stop reachable, for the entire procedure — every step from Step 3
+onward can move the robot. See [Safety
+Principles](../safety/safety-principles.md) and [Operating
+Area](../safety/operating-area.md).
+
 ## Prerequisites
 
 [Operator Interface](operator-interface.md); the operator understands
 [Safety Principles](../safety/safety-principles.md).
 
-## Starting State
+## Initial state
 
 The Spot driver is running and the software E-stop endpoint is
 present (`status/estop` reports `NOT_STOPPED`).
 
-## Steps
+## Procedure
+
+Location for every step below: the operator's own controller (DualSense
+or, per the historical/joystick path, another controller), held at the
+Operator Station, sending commands that reach `spot_driver` on the
+Robot Computer.
 
 ### Step 1: Select the base control mode
+
+Type: not read-only (changes controller mode state), no motion
+commanded.
 
 Action: On the DualSense controller, press `Share` to select Spot
 base-control mode (source:
@@ -27,7 +43,7 @@ using a generic `joy_node` plus a dedicated C++ controller node
 `spot_kinova_controller.cpp`) for Xbox-style, "Backterra", or "Steam
 Deck" controller variants.
 
-Expected state: Controller in base-control mode.
+Expected observation: Controller in base-control mode.
 
 Verification: `Verified in code` for the DualSense mapping; which
 physical controller is actually used in a given session is not
@@ -54,13 +70,16 @@ Recovery: Re-press the mode-select control.
 
 ### Step 2: Release the input lock
 
+Type: not read-only (changes an input-gate state), but does not itself
+send a motion command.
+
 Action: The DualSense mapping treats holding `L2` and `R2`
 simultaneously as a toggle for a `locked_mode` flag; while locked, no
 commands are published (source: `read_dualsense.py`,
 `ControllerReader`, lines defining `locked_mode`). Confirm the
 controller is not in this locked state before attempting to drive.
 
-Expected state: Unlocked — commands will be published.
+Expected observation: Unlocked — commands will be published.
 
 Verification: `Verified in code`. This is a software input gate, not a
 robot-level safety stop — do not treat it as an E-stop substitute; see
@@ -73,13 +92,15 @@ Recovery: Toggle the lock again.
 
 ### Step 3: Drive
 
+Type: **not read-only — commands robot motion.**
+
 Action: Use the left stick for translation and the right stick's `X`
 axis for rotation. Source (`read_dualsense.py`): `linear.x` from `LY`,
 `linear.y` from `LX`, `angular.z` from `RX`, published as
 `geometry_msgs/Twist` on `cmd_vel`, with a 0.1 deadzone. `R1`/`L1`
 increment/decrement a speed scale factor.
 
-Expected state: Spot moves according to the commanded `Twist`.
+Expected observation: Spot moves according to the commanded `Twist`.
 
 Verification: `Verified in code` for the mapping; the robot's physical
 response is `Unverified on hardware` in this documentation.
@@ -94,12 +115,14 @@ Stops](../safety/emergency-stops.md).
 
 ### Step 4: Body pose adjustments (optional)
 
+Type: **not read-only — commands robot motion.**
+
 Action: `Triangle` resets height/pitch/roll and gait mode; `Square`
 commands a sit (`send_sit_request()`); `Cross` toggles body-pose mode
 (right stick controls roll/pitch, published on `body_pose`); D-pad
 up/down adjusts height. Source: `read_dualsense.py`.
 
-Expected state: Spot's body pose changes accordingly.
+Expected observation: Spot's body pose changes accordingly.
 
 Verification: `Verified in code`.
 
@@ -107,16 +130,37 @@ Stop condition: Same as Step 3.
 
 Recovery: `Triangle` to reset to a known pose.
 
-## Successful End State
+## Expected observations
 
-Spot responds to drive commands within the operating area, under
-continuous supervision.
+Spot responds to stick/button input within the operating area, with
+motion matching the commanded direction and speed, under continuous
+supervision.
 
-## Common Problems
+## Verification
+
+Each step's own Verification line is authoritative. The one
+cross-cutting check worth repeating: confirm `status/estop` still
+shows `NOT_STOPPED` before assuming an input problem is actually a
+safety-system problem.
+
+## Stop conditions
+
+Any step's own Stop condition, or: any unexpected motion, an obstacle,
+or a person entering the operating area — release input immediately
+and escalate per [Emergency Stops](../safety/emergency-stops.md) if
+release alone does not stop the robot.
+
+## Recovery
 
 If Spot does not respond to stick input, confirm the controller is not
 in the locked-input state (Step 2) and that `status/estop` still shows
-`NOT_STOPPED` before assuming a deeper fault.
+`NOT_STOPPED` before assuming a deeper fault. For anything beyond that,
+see [Recovery and Troubleshooting](recovery-and-troubleshooting.md).
+
+## Final state
+
+Spot responds to drive commands within the operating area, under
+continuous supervision.
 
 ## Related components
 
