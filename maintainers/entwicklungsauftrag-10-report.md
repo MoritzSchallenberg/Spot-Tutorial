@@ -320,7 +320,7 @@ commit, or use *Actions → Build and deploy site → Run workflow* if
 `workflow_dispatch` access is available), then re-check the live URLs
 listed in Section 19 of the task.
 
-## Summary
+## Summary (first pass)
 
 `main` now contains the full ALeRT Spot Tutorial content, all local
 tests passing, two real bugs found and fixed during this session's own
@@ -330,3 +330,266 @@ the form this tutorial is meant to be seen — both blockers are
 GitHub-account-level admin actions outside what this session could
 perform without credentials, and are reported precisely rather than
 assumed away.
+
+---
+
+## Second pass: a more detailed re-send of the same task
+
+The task was re-sent twice more with substantially more specific
+requirements for several sections. This second pass covers that
+additional work, on top of everything above (which still stands —
+nothing in the first pass was reverted).
+
+### 1. Homepage and Start Here, rebuilt to the newer spec
+
+`docs/index.md`'s three entry cards were relabeled and restructured per
+the new wording: "Who are you?" (was "What do you want to do?"), cards
+"New Spot operator" / "Spot software developer" / "Troubleshooting a
+problem" (was task-based phrasing from the first pass), each ending
+with a "→ Full [section]" link, plus a direct GitHub Issues link for
+reporting mistakes.
+
+`docs/start-here.md` was rewritten to four named paths instead of the
+first pass's five: **First day with Spot**, **Software development**,
+**Manipulator development**, **Autonomous rescue development** — the
+standalone "Troubleshooting" path was removed (it now lives only as
+the homepage card plus a "Related components" note explaining why, so
+it isn't silently missing). Each path keeps its prerequisites/hardware/
+read-only/supervision/outcome summary from the first pass's format.
+
+One process note: this edit initially landed in a stale, disconnected
+copy of the working directory that had appeared alongside the real one
+(the environment relocated mid-session — see the git history for
+`5e2bb7a`, which is where the corrected version actually landed after
+this was caught and fixed).
+
+### 2. Workspace context added to operating commands
+
+Per the requirement that a command's `Location:` line say which ROS 2
+workspace owns the package being launched, not just which computer:
+`docs/operating/power-on.md` Steps 4–5 (`spot_estop.py` /
+`spot_driver_plus` → `spot_ws`) and
+`docs/operating/operating-the-manipulator.md` Steps 1–2
+(`kortex_bringup` / `spot_gen3_moveit` → `man_ws`) now name the
+workspace explicitly.
+
+### 3. Deployment smoke test added
+
+`.github/workflows/pages.yml` gained a `smoke-test` job (`needs:
+deploy`) that curls the live homepage with a bounded retry budget (10 ×
+10s), confirms the password-gate string is present on both the
+homepage and a direct subpage request (`safety/operator-checklist.html`
+— chosen because it exists in every build and is not the homepage, so
+this genuinely tests "is a random subpage gated", not just the root),
+and confirms `_static/css/custom.css` and `_static/js/color-mode.js`
+both return 200. All of its literal assumptions (the page path
+existing, the gate string actually appearing in the encrypted HTML, the
+two asset paths existing) were checked locally against a real encrypted
+build before relying on them.
+
+### 4. Navigation simplification and image checks
+
+Reviewed for thin pages worth merging and dead links worth redirecting;
+found none — this site has never had a prior public deploy of its own
+content (every previous deploy attempt failed before the deploy job
+ran, and Pages currently serves an unrelated Jekyll README — see §15
+above), so there is no old bookmarked URL structure to preserve via a
+redirect. Checked all 52 images under `docs/_static/images` for
+byte-identical duplicates (SHA-256, none found) and non-standard EXIF
+orientation (none found) — a fuller sweep than the first pass's
+spot-check of two images.
+
+### 5. A real Mermaid regression, found and fixed differently this time
+
+Re-testing the encrypted build from scratch this round found **all 6
+architecture-diagram pages rendering zero diagrams** — the fix from the
+first pass (commit `d9185d8`, a `MutationObserver` calling
+`window.runMermaid(false)` on every DOM mutation) had regressed:
+calling that function repeatedly in quick succession corrupts mermaid's
+internal per-block state without ever actually drawing an SVG, which
+was not caught before because the first pass's testing did not exercise
+repeated rapid mutations the way `document.write()` injecting a full
+page actually does.
+
+Two further iterations before reaching a working fix, in order:
+
+1. A one-shot `MutationObserver` (`runMermaid(true)`, fired once on the
+   first `.mermaid` element observed) worked for **manual** password
+   entry but not for **"remember me" auto-unlock** — all 6 pages still
+   rendered zero diagrams when navigated to directly.
+2. Waiting for the window `"load"` event before a short bounded poll
+   seemed like the right fix (it is the same event
+   sphinxcontrib-mermaid's own script waits for) — but instrumented
+   testing showed `"load"` does not reliably fire at all after
+   StatiCrypt's `document.write()`. On a "remember me" auto-unlock,
+   `document.readyState` does reach `"complete"`, yet **no `"load"`
+   event is ever dispatched to any listener — including
+   sphinxcontrib-mermaid's own**, which also never ran in that case.
+   Manual password entry only appeared to work because the placeholder
+   gate page's own one-time `"load"` had already started this script's
+   poll loop before the user finished typing, and the loop was still
+   running when the real content landed moments later.
+
+**The actual fix** (`docs/_static/js/mermaid-after-decrypt.js`, commit
+`57018b6`): poll `document.readyState` directly instead of depending on
+any event, with a 900ms settle delay once it first reads `"complete"`
+(mermaid's own render is `async` and explicitly not safe to call
+concurrently with a second pass — the settle delay gives it room to
+finish on an ordinary page before this script ever checks whether
+anything is still unrendered), then call `window.runMermaid(true)`
+once if any `.mermaid`/`pre.mermaid` block still lacks an `<svg>`
+child.
+
+Verified, with an instrumented console-timeline test, across: manual
+password entry (`data-flow.html`, 2 diagrams), same-context "remember
+me" navigation across all 6 diagram-bearing pages, a fresh reload after
+"remember me", and the plain non-gated site including a light/dark
+theme toggle (which an earlier iteration of this fix had regressed:
+diagram count dropping from 2 to 1 after toggling) — zero console
+errors and correct diagram counts in every case.
+
+### 6. Two real, previously-undetected content leaks in the deployment pipeline itself
+
+Found while re-verifying the password gate ahead of merging. **Both
+predate this round** — they are artifacts of how `sphinx-build` and
+StatiCrypt have been invoked in `.github/workflows/pages.yml` since it
+was first written, not something this round's content changes
+introduced — and would have affected the very first successful deploy
+once the missing secret is set, not just this round's commits.
+
+1. **`sphinx-build` never specified a doctree directory**, so Sphinx
+   used its own default of `docs/_build/html/.doctrees` — *inside* the
+   directory that then gets encrypted and published. Those pickle files
+   hold the full parsed content of every page (103 files, 4.3MB in this
+   build). StatiCrypt only wraps `.html` files in its password template;
+   everything else in the directory it is pointed at is copied straight
+   through unencrypted. This meant the full text of every page —
+   safety procedures, operating commands, architecture details — would
+   have been readable at a predictable URL regardless of the password
+   gate. Fixed by adding `-d docs/_build/doctrees`, a sibling of
+   `docs/_build/html`, to the build command.
+2. **Sphinx's built-in search index (`searchindex.js`) ships in
+   plaintext** — it is a full-text index of effectively every word used
+   on every page, and being a `.js` file (not `.html`), StatiCrypt has
+   no way to gate it at all. There is no configuration flag that makes
+   this file protectable; the only correct fix is to not publish it.
+   Added a workflow step that deletes it from the *encrypted* output
+   specifically, right after encryption — local development builds are
+   unaffected and keep full in-site search. **Trade-off, stated
+   plainly:** the published site's search box will not return results.
+   This is intentional: the task is explicit that the password gate
+   must be a real access hurdle, never a partial one, and a searchable
+   plaintext index of the entire site's content directly undermines
+   that.
+
+Both fixed in commit `60b6e7b`. Re-verified locally end-to-end: rebuilt,
+re-encrypted with a throwaway password, confirmed zero `.doctrees`/
+`.pickle`/`.doctree` files and no `searchindex.js` anywhere in the
+published output, and re-ran the full password-gate test suite (direct
+subpage access gated, wrong password rejected, correct password works,
+"remember me" navigation, no raw `.md` sources served, no `_sources/`
+directory) — all pass.
+
+### 7. Stale repository-name references, found and fixed
+
+The GitHub repository was renamed in place from
+`Learning-Robotics-Crash-Course` to `Spot-Tutorial` at some point after
+Entwicklungsauftrag 8's `maintainers/rebrand-followups.md` explicitly
+decided not to rename it. `docs/conf.py`'s `html_baseurl` and
+`README.md`'s published "Website:" link still pointed at the old Pages
+URL — confirmed via direct fetch that the old Pages URL now **404s**
+(unlike the repository page itself, which GitHub does redirect on a
+rename) — a real, live broken link, not a cosmetic inconsistency.
+Fixed `html_baseurl`, README's website link and local-serving
+instructions, `scripts/verify-site.py`'s matching example path and
+`--base-url` default, and every hard-coded
+`github.com/.../Learning-Robotics-Crash-Course` link across the
+`videos.md`/`continue-learning.md` pages and `LICENSES.md` (these
+still redirected correctly on `github.com`, so were not broken, but
+were inconsistent with the canonical name). Logged in
+`maintainers/rebrand-followups.md`. Commit `e691728`.
+
+One link I initially "fixed" incorrectly and then reverted: the
+homepage's GitHub Issues link
+(`github.com/MoritzSchallenberg/Spot-Tutorial/issues/new`) was already
+correct — I mistakenly assumed it was wrong because the local git
+remote still says `Learning-Robotics-Crash-Course`, without checking
+that the remote URL redirects fine and the *actual* current repository
+name (confirmed via the API) is `Spot-Tutorial`. Caught before
+committing.
+
+### 8. Full local test suite, re-run clean after all of the above
+
+- `sphinx-build -W --keep-going -d docs/_build/doctrees`: clean.
+- `scripts/verify-structure.py`: all checks pass (11 primary-nav
+  sections, 10 background directories).
+- `scripts/verify-site.py`: **313/313 checks pass**, 102 pages, both
+  themes (JS errors, 390px overflow, light/dark toggle, search, copy
+  buttons, syntax highlighting, WCAG AA contrast, dropdown/sidebar
+  keyboard focus).
+- Secret scan (the workflow's own four grep patterns, run manually
+  against the built output): 0 matches in all four categories.
+- Throwaway test password confirmed absent, in plaintext, from both
+  the plain and encrypted build output.
+- Absolute-path check (`href="/`, `src="/`, excluding `_static`/
+  `genindex`/`search.html`): 0 matches.
+- `sphinx-build -b linkcheck`: one pre-existing broken external link
+  (403 on a `maskor.fh-aachen.de` PDF download, from
+  `about/alert-and-spot.md`, unrelated to this round's changes) and one
+  redirect (`openssh.com` → `openssh.org`) — both informational only
+  per the workflow's own design (`continue-on-error: true`), neither a
+  blocker.
+- StatiCrypt gate, re-verified end-to-end after the leak fixes: direct
+  subpage access gated (not just the homepage), wrong password
+  rejected, correct password reveals real content, navigation and
+  search functional after unlock, no raw `.md` source files served, no
+  `_sources/` directory, no `.doctrees`/pickle files, `searchindex.js`
+  correctly absent (404) from the published output.
+- Mermaid: verified across manual unlock, "remember me" navigation (all
+  6 diagram pages), reload-after-remember-me, and the plain site
+  including a theme toggle — zero console errors throughout.
+
+### 9. Merge, push, and deploy — same blocker as the first pass
+
+`feat/alert-spot-tutorial-polish` (5 commits since the first pass's
+report: `5e2bb7a`, `93ee70d`, `c6f5693`, `57018b6`, `e691728`, plus
+`60b6e7b` for the leak fixes) was fast-forwarded into `main`
+(`git merge --ff-only`; `main` confirmed to still be an ancestor
+immediately before merging; no force-push, no reset) and both `main`
+and the polish branch were pushed to `origin`.
+
+The resulting `Build and deploy site` run (`35273932881`, commit
+`60b6e7b`) was watched via the public Actions API to completion:
+**failed**, at the exact same step as every previous push — "Encrypt
+the site behind a password gate" — with everything before it
+(checkout, Python setup, dependency install, the Sphinx build itself,
+the secret scan, Node.js setup) succeeding, and everything after it
+(including the new "Remove the unencrypted search index" step, the
+external-link check, artifact upload, and the entire `deploy` and
+`smoke-test` jobs) correctly skipped as a result. Raw step logs remain
+inaccessible without admin auth (`403 Must have admin rights to
+Repository`, confirmed again this round). This is the same failure
+signature as before and, per the step's own fail-fast design, remains
+most consistent with `STATICRYPT_PASSWORD` still being unset — not
+provable with certainty without either the raw log or the secret
+actually being set, and stated with that same qualification as before.
+
+Live site check, repeated: `https://moritzschallenberg.github.io/Spot-Tutorial/`
+still returns the classic-Pages Jekyll rendering of `README.md`
+(confirmed via `<title>` match), and `GET /repos/.../pages` still 404s
+unauthenticated — GitHub Pages remains on "Deploy from a branch", not
+"GitHub Actions". Neither blocker has moved since the first pass's
+report; both still require the same two manual, admin-only steps
+listed there, which this session still cannot perform without
+credentials this environment does not have.
+
+### Second-pass summary
+
+Everything locally verifiable now passes, including two real content
+leaks in the deployment pipeline itself (not just this round's new
+content) that were found and fixed before they could ever reach a
+live, publicly-encrypted deploy. `main` is fast-forwarded and pushed.
+Publication is still not live in its intended form — the two blockers
+are exactly the ones identified in the first pass's report, unchanged
+by anything in this session, and still require repository-admin access
+this session was never given.
