@@ -23,10 +23,26 @@ collision-free arm trajectory and a gripper command.
 ## Where ALeRT uses this
 
 {{ alert }} {{ documented }} ALeRT's manipulator is a **Kinova Gen3
-7-DOF arm** fitted with a **Robotiq 2F-85 two-finger adaptive gripper**
-and an **Intel RealSense** vision module — confirmed from
+arm** fitted with a **Robotiq 2-finger adaptive gripper** and an
+**Intel RealSense** vision module — confirmed from
 [`ros2_kortex`](https://github.com/RRL-ALeRT/ros2_kortex)'s own README,
-not assumed from the repository name. In the Webots simulation, MoveIt 2
+not assumed from the repository name.
+
+:::{admonition} Degrees of freedom and gripper model: check the current hardware directly
+:class: warning
+
+A direct audit of the deployed Spot code found the manipulator's own
+bring-up command specifying **6 degrees of freedom**
+(`dof:=6`) and a joint-limits configuration defining exactly 6 joints
+— not 7. The gripper model is also ambiguous in the code: one source
+names its links consistent with a 2F-140, another consistent with a
+2F-85. See [System Architecture: Hardware
+Overview](../architecture/hardware-overview.md#kinova-gen3-manipulator)
+for the full evidence. Confirm both against the physical unit rather
+than assuming either figure.
+:::
+
+In the Webots simulation, MoveIt 2
 control is already documented and working today — see the [platform
 page's Manipulation with MoveIt
 section](../platforms/spot/index.md#manipulation-with-moveit):

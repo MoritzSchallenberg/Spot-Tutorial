@@ -55,9 +55,9 @@ tell what it is doing.
 
 {{ alert }} {{ documented }}
 
-Spot's high-level control uses [RAFCON](https://github.com/DLR-RM/RAFCON),
-a graphical state machine editor, for exactly this topic's core pattern
-— see
+The Webots simulation tutorial track uses
+[RAFCON](https://github.com/DLR-RM/RAFCON), a graphical state machine
+editor, for exactly this topic's core pattern — see
 {ref}`Planning approaches <rafcon-a-graphical-state-machine-tool>`.
 **Sensors/actuators**: postures exposed as **services** (stand, sit, lie
 down — quick, either-succeeds-or-not calls, not actions), plus MoveIt 2
@@ -67,6 +67,20 @@ practical task's discipline. **Verification status**: {{ simulation }}
 confirmed in Webots; the physical robot is a supervised-only exercise
 (see this topic's [Try it on
 Spot](practical-exercise.md#try-it-on-spot)).
+
+:::{admonition} The real deployed Spot system uses a different framework
+:class: note
+
+This topic's tutorial exercises use RAFCON, matching the former ALeRT
+tutorial's own material. A direct audit of the current Spot code found
+**YASMIN**, not RAFCON, as the actively used state-machine framework
+for real missions (an 18-state K-Rail inspection sequence) — no RAFCON
+reference exists anywhere in the current codebase. See [System
+Architecture: Software
+Components](../architecture/software-components.md#behaviormission)
+for the evidence. Both are legitimate state-machine tools for the
+pattern this topic teaches; they are simply not the same one.
+:::
 
 ## Working through this topic
 
