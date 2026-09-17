@@ -103,6 +103,31 @@ pip install sphinx-autobuild
 sphinx-autobuild docs docs/_build/html
 ```
 
+## Access protection
+
+The published site is wrapped in a static password gate
+([StatiCrypt](https://github.com/robinmoisson/staticrypt)) by the
+`.github/workflows/pages.yml` deploy pipeline, as an access hurdle for
+this pre-release documentation — **this is not real server-side
+authentication.** The page and all of its assets are still delivered
+to any visitor's browser; StatiCrypt only prevents the *content* from
+being readable without the password, using client-side decryption. Do
+not rely on it to keep anything genuinely confidential — nothing
+confidential is or should be published on this site regardless (see
+`maintainers/spot-security-audit.md`, internal).
+
+The workflow encrypts every HTML page — including direct links to
+subpages, not just the site root — using the `STATICRYPT_PASSWORD`
+repository secret. If that secret is not set, the build step fails
+loudly instead of silently deploying an unprotected site. The password
+value itself never appears in the repository, in any workflow file, or
+in build logs.
+
+**Manual admin step (not automated by this repository):** a repository
+owner must set the `STATICRYPT_PASSWORD` secret under *Settings →
+Secrets and variables → Actions* before the site can deploy
+successfully. This documentation does not state the password value.
+
 ## Project structure
 
 **`docs/`** is the entire published website — everything Sphinx builds and

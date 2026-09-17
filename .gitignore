@@ -11,6 +11,9 @@ _build/
 docs/_build/
 .doctrees/
 
+# --- StatiCrypt local test runs (salt only, but never intended to be committed) ---
+.staticrypt.json
+
 # --- colcon build output (examples/ packages) ---
 build/
 install/

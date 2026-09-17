@@ -52,12 +52,12 @@ and admin rights over both the source and destination repositories.
    location) specifically to avoid a dead link for anyone who already
    bookmarked or linked the current site.
 7. **Update GitHub Actions secrets on the new repository.** Any secret
-   configured on the current repository (see
-   `maintainers/repository-audit.md` and, once implemented, the
-   `STATICRYPT_PASSWORD` secret for the encrypted-deployment gate) does
-   **not** carry over automatically on a transfer to a different owner in
-   every case — verify and re-set it on the destination repository before
-   relying on the workflow there.
+   configured on the current repository (see `maintainers/repository-audit.md`
+   and the `STATICRYPT_PASSWORD` secret for the password-gated deployment,
+   implemented in Entwicklungsauftrag 9) does **not** carry over
+   automatically on a transfer to a different owner in every case —
+   verify and re-set it on the destination repository before relying on
+   the workflow there.
 8. **Update `docs/conf.py`'s `author`/`copyright` fields** if the
    organisational owner of the content changes as part of the move (e.g.
    if `RRL-ALeRT` becomes the named copyright holder instead of, or

@@ -119,6 +119,35 @@ jobs:
           fi
           echo "OK: no secrets found in the build output."
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Encrypt the site behind a password gate
+        # The task requires a static-hosting access hurdle (StatiCrypt),
+        # not real server-side authentication -- see README.md. The
+        # password itself must never appear in a log or in the repository:
+        # it is read from the STATICRYPT_PASSWORD secret via the
+        # environment, which staticrypt's CLI picks up automatically
+        # (never passed as a -p command-line argument, which would show up
+        # in the Action's own "Run" log line). -r encrypts every HTML file
+        # recursively, so direct subpages are protected too, not only the
+        # site root. The build must fail, not deploy an unprotected site,
+        # if the secret is missing -- so this step checks for it itself
+        # rather than letting a blank password silently produce an
+        # unlocked page.
+        env:
+          STATICRYPT_PASSWORD: ${{ secrets.STATICRYPT_PASSWORD }}
+        run: |
+          set -e
+          if [ -z "$STATICRYPT_PASSWORD" ]; then
+            echo "::error::STATICRYPT_PASSWORD secret is not set -- refusing to deploy an unprotected site. See README.md for the required manual setup step."
+            exit 1
+          fi
+          npx --yes staticrypt@3.5.4 docs/_build/html -d docs/_build/encrypted -r --short
+          echo "OK: site encrypted to docs/_build/encrypted/html"
+
       - name: Check external links
         # Informational only. Internal links and images are already validated
         # by the `-W` build above; this step checks that external URLs still
@@ -139,10 +168,13 @@ jobs:
 
       - name: Upload the Pages artifact
         # Only the deploy job needs the artifact, but uploading on pull
-        # requests too confirms the artifact step itself works.
+        # requests too confirms the artifact step itself works. The
+        # encrypted output (docs/_build/encrypted/html), never the raw
+        # unprotected build, is what gets published -- see "Encrypt the
+        # site behind a password gate" above.
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs/_build/html
+          path: docs/_build/encrypted/html
 
   deploy:
     name: Deploy to GitHub Pages
