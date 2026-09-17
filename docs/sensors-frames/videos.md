@@ -51,7 +51,7 @@ Quality over quantity: every video on this site has its title, channel
 and duration confirmed via YouTube's own oembed endpoint before being
 added. If this link is ever dead or the content has moved, that is a
 documentation bug worth reporting — see the [repository
-README](https://github.com/MoritzSchallenberg/Learning-Robotics-Crash-Course)
+README](https://github.com/MoritzSchallenberg/Spot-Tutorial)
 for how.
 :::
 

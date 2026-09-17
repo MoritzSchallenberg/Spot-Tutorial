@@ -21,8 +21,8 @@ Usage:
     sphinx-build -b html docs docs/_build/html
 
     # 2. serve it under the same subpath GitHub Pages uses
-    mkdir -p /tmp/site-serve/Learning-Robotics-Crash-Course
-    cp -r docs/_build/html/. /tmp/site-serve/Learning-Robotics-Crash-Course/
+    mkdir -p /tmp/site-serve/Spot-Tutorial
+    cp -r docs/_build/html/. /tmp/site-serve/Spot-Tutorial/
     python3 -m http.server 8899 -d /tmp/site-serve &
 
     # 3. run this script
@@ -304,7 +304,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--base-url",
-        default="http://localhost:8899/Learning-Robotics-Crash-Course",
+        default="http://localhost:8899/Spot-Tutorial",
         help="Base URL the built site is being served from "
         "(default matches the GitHub Pages subpath, served locally).",
     )

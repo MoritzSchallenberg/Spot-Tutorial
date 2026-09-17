@@ -7,10 +7,11 @@ team at the **MASKOR Institute, FH Aachen**. It documents the real
 system's safety procedures, operating procedures, and hardware/software
 architecture, grounded in the team's own code and configuration.
 
-**Website:** <https://moritzschallenberg.github.io/Learning-Robotics-Crash-Course/>
-(repository name and Pages URL are unchanged for now — see
+**Website:** <https://moritzschallenberg.github.io/Spot-Tutorial/>
+(the repository was renamed from `Learning-Robotics-Crash-Course` to
+`Spot-Tutorial` in place, still under `MoritzSchallenberg` — see
 [`maintainers/rebrand-followups.md`](maintainers/rebrand-followups.md) for
-what a later transfer to an `RRL-ALeRT` repository would require)
+what a further transfer to an `RRL-ALeRT` repository would still require)
 
 This is a long-lived technical reference, not a scheduled course: it
 carries no dates, sessions or event logistics — see
@@ -94,7 +95,7 @@ Then visit <http://localhost:8000>.
 > [!NOTE]
 > The site is served from a repository subpath on GitHub Pages. All asset paths
 > are relative, so it works both at `/` locally and at
-> `/Learning-Robotics-Crash-Course/` in production. **Never introduce an absolute
+> `/Spot-Tutorial/` in production. **Never introduce an absolute
 > path beginning with `/`.**
 
 ### Rebuilding on save
@@ -432,8 +433,8 @@ that:
 sphinx-build -b html docs docs/_build/html
 pip install playwright && playwright install chromium
 
-mkdir -p /tmp/site-serve/Learning-Robotics-Crash-Course
-cp -r docs/_build/html/. /tmp/site-serve/Learning-Robotics-Crash-Course/
+mkdir -p /tmp/site-serve/Spot-Tutorial
+cp -r docs/_build/html/. /tmp/site-serve/Spot-Tutorial/
 python3 -m http.server 8899 -d /tmp/site-serve &
 
 python3 scripts/verify-site.py
@@ -504,7 +505,7 @@ Pushes to `main` trigger `.github/workflows/pages.yml`, which installs
 dependencies, builds with `-W`, scans the output for secrets, encrypts the
 site behind the password gate (see "Access protection" above), checks
 links, and publishes to GitHub Pages. GitHub Pages is enabled and live:
-<https://moritzschallenberg.github.io/Learning-Robotics-Crash-Course/> —
+<https://moritzschallenberg.github.io/Spot-Tutorial/> —
 every push to `main` redeploys it automatically. The one manual step is
 one-time: a repository owner must set the `STATICRYPT_PASSWORD` secret
 before the very first successful deploy under this workflow; after that,

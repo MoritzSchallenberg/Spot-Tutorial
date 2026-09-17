@@ -169,5 +169,5 @@ Recorded in full in `SECURITY_REVIEW.md` and `CONTENT_REVIEW.md`:
 
 If you believe material here is attributed incorrectly, or is published without
 the right to do so, please open an issue on the
-[repository](https://github.com/MoritzSchallenberg/Learning-Robotics-Crash-Course)
+[repository](https://github.com/MoritzSchallenberg/Spot-Tutorial)
 and it will be corrected or removed.

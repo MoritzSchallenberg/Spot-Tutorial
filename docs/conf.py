@@ -149,9 +149,9 @@ html_css_files = ["css/custom.css"]
 html_js_files = ["js/color-mode.js", "js/mermaid-after-decrypt.js"]
 
 # The site is served from a repository subpath on GitHub Pages
-# (https://<user>.github.io/Learning-Robotics-Crash-Course/). Sphinx emits
-# relative asset paths, so no absolute "/" paths must ever be introduced.
-html_baseurl = "https://moritzschallenberg.github.io/Learning-Robotics-Crash-Course/"
+# (https://<user>.github.io/Spot-Tutorial/). Sphinx emits relative asset
+# paths, so no absolute "/" paths must ever be introduced.
+html_baseurl = "https://moritzschallenberg.github.io/Spot-Tutorial/"
 
 # -- Options for the linkcheck builder ---------------------------------------
 #

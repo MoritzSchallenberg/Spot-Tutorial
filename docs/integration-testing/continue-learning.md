@@ -149,7 +149,7 @@ problem differently, worth comparing against Ansible's approach.
 <automated-tests-for-ros-2-packages>` automatically on every push, in a
 clean environment, via GitHub Actions or similar — the same principle this
 site's own repository uses for its own build
-([README](https://github.com/MoritzSchallenberg/Learning-Robotics-Crash-Course)),
+([README](https://github.com/MoritzSchallenberg/Spot-Tutorial)),
 applied to a ROS 2 package instead of a Sphinx site.
 
 **Why it matters.** A test that only runs when someone remembers to run it

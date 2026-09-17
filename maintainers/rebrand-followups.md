@@ -67,3 +67,21 @@ None of the above was performed as part of this task — the task
 explicitly says not to transfer or rename the repository independently,
 and several of the steps above need admin rights this session does not
 have and should not attempt to bypass.
+
+## Update: the repository was renamed in place
+
+Since this document was written, `MoritzSchallenberg/Learning-Robotics-Crash-Course`
+was renamed (in place, still under the same owner, not transferred to an
+`RRL-ALeRT` organisation) to `MoritzSchallenberg/Spot-Tutorial`. This is
+a smaller change than the transfer scenario above, but it made the same
+class of problem real: `docs/conf.py`'s `html_baseurl`, README.md's
+"Website:" line and local-serving instructions, and every hard-coded
+`github.com/MoritzSchallenberg/Learning-Robotics-Crash-Course` link across
+the `videos.md`/`continue-learning.md` pages and `LICENSES.md` all still
+pointed at the old name — the GitHub Pages URL for the old name now
+404s (Pages does not redirect on a rename the way the repository page
+itself does), so this was a real, not just cosmetic, break. All of the
+above were updated to `Spot-Tutorial` as part of Entwicklungsauftrag 10.
+The still-open `RRL-ALeRT`-organisation transfer scenario described above
+remains unperformed and would still need its own pass through this same
+checklist if it happens later.

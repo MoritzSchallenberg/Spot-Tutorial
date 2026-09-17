@@ -31,7 +31,7 @@ command-by-command tutorial.
 This is deliberately one carefully checked video rather than a longer,
 unverified list. If this link is ever dead or the content has moved, that
 is a documentation bug worth reporting — see the [repository
-README](https://github.com/MoritzSchallenberg/Learning-Robotics-Crash-Course).
+README](https://github.com/MoritzSchallenberg/Spot-Tutorial).
 :::
 
 ## Practical demonstrations

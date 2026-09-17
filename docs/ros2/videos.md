@@ -58,7 +58,7 @@ being added — no ID is ever guessed from memory. A category above with
 nothing in it means no candidate video actually cleared that bar yet, not
 that the category was skipped. If a link above is ever dead or the
 content has moved, that is a documentation bug worth reporting — see the
-[repository README](https://github.com/MoritzSchallenberg/Learning-Robotics-Crash-Course)
+[repository README](https://github.com/MoritzSchallenberg/Spot-Tutorial)
 for how.
 :::
 
