@@ -1,108 +1,102 @@
 # ALeRT Spot Tutorial
 
-A technical reference and tutorial site for the **ALeRT** (Aachen Legged
-Rescue Team) Spot system: a Boston Dynamics Spot quadruped fitted with a
-Kinova Gen3 manipulator and Robotiq gripper, operated by the RoboCup
-Rescue League team at the **MASKOR Institute, FH Aachen**. It documents
-the real system — its safety procedures, its operating procedures, and
-its hardware and software architecture — grounded in the team's own
-code and configuration.
-
-:::{figure} _static/images/history/spot_gravel_sitting.jpg
-:alt: Boston Dynamics Spot seated on a gravel and rubble-like surface.
-:width: 60%
-:align: center
-
-Spot on gravel/rubble-like terrain, from the team's RoboCup Rescue
-League competition history — see [About ALeRT and Spot](about/index.md).
-:::
+The technical reference for **ALeRT**'s Spot system — a Boston Dynamics
+Spot quadruped fitted with a Kinova Gen3 manipulator and Robotiq
+gripper, operated by the RoboCup Rescue League team at the **MASKOR
+Institute, FH Aachen** — grounded in the team's own code and
+configuration.
 
 :::{admonition} Safety notice
 :class: danger
 
 Spot is a heavy, fast-moving legged robot with an attached manipulator
 arm. Read [Safety and Prerequisites](safety/index.md) in full before
-approaching or operating the physical robot. Do not operate the
-physical system without supervision from someone authorized to use it.
+approaching the physical robot, and never move the real system without
+supervision from someone authorized to operate it.
 :::
 
-## Three ways into this site
+## What do you want to do?
 
 ::::{grid} 1 1 3 3
 :gutter: 3
 
-:::{grid-item-card} Learn about ALeRT and Spot
-:link: about/index
-:link-type: doc
+:::{grid-item}
+### I want to operate Spot
 
-The team, the RoboCup Rescue League, and how the Spot platform came to
-be ALeRT's system.
+- [Safety Principles](safety/safety-principles.md)
+- [Operator Checklist](safety/operator-checklist.md)
+- [System Preparation](operating/system-preparation.md)
+- [Power-On Procedure](operating/power-on.md)
+- [Driving Spot](operating/driving-spot.md)
+- [Safe Shutdown](operating/safe-shutdown.md)
 :::
 
-:::{grid-item-card} Operate Spot safely
-:link: safety/index
-:link-type: doc
+:::{grid-item}
+### I want to understand the system
 
-What to know before touching the robot, and the step-by-step procedures
-for running a session.
+- [Hardware Overview](architecture/hardware-overview.md)
+- [Computers and Network](architecture/computers-and-network.md)
+- [Software Components](architecture/software-components.md)
+- [Startup and Launch Sequence](architecture/startup-and-launch-sequence.md)
+- [ROS 2 Interfaces](architecture/ros2-interfaces.md)
+- [Coordinate Frames](architecture/coordinate-frames.md)
+- [Data Flow](architecture/data-flow.md)
 :::
 
-:::{grid-item-card} Understand the system
-:link: architecture/index
-:link-type: doc
+:::{grid-item}
+### I want to develop for Spot
 
-The hardware, computers, software, and ROS 2 interfaces that make up
-the Spot system.
-:::
-
-::::
-
-## What this site covers
-
-- [About ALeRT and Spot](about/index.md) — team and competition
-  background.
-- [Safety and Prerequisites](safety/index.md) — stop states, E-stops,
-  operating area, required knowledge.
-- [Operating Spot](operating/index.md) — power-on through shutdown,
-  driving, manipulator control, recovery.
-- [System Architecture](architecture/index.md) — hardware, network,
-  software, startup order, ROS 2 interfaces, frames, data flow.
+- [ROS 2](ros2/index.md)
 - [Sensors and Perception](sensors-and-perception/index.md)
 - [Navigation and Mapping](navigation-and-mapping/index.md)
 - [Manipulator and MoveIt](manipulation/index.md)
 - [Autonomous Behaviors](autonomous-behaviors/index.md)
-- [Deployment and Configuration](deployment-and-configuration/index.md)
 - [Diagnostics and Testing](integration-testing/index.md)
-- [Reference](reference/index.md)
+:::
+
+::::
+
+Not sure where to start, or want a guided order through one of these
+rather than a flat list? See [**Start Here**](start-here.md) for five
+concrete learning paths, each with its prerequisites, whether it needs
+real hardware, and what you should be able to do by the end of it.
+
+## About this site
+
+**Covers:** the real ALeRT Spot system — safety, operation, and
+architecture — not a general robotics course.
+**Written for:** anyone preparing to operate the physical robot, or
+anyone who wants to understand how it is built.
+**Software:** Ubuntu 22.04 LTS, ROS 2 Humble, unless a specific ALeRT
+repository is documented to need something else — see [Supported
+environment](reference/compatibility.md).
+**Historical content:** the [About ALeRT and Spot](about/index.md)
+section and some operating-page screenshots document the team's past,
+not the current system — every such page or image says so explicitly.
+**Verification:** most claims on this site are `Verified in code` or
+`Verified in configuration`, not `Verified on hardware` — see [Safety
+Principles](safety/safety-principles.md#verification-levels) for what
+each label means and why. [Reference: System
+Status](reference/system-status.md) gives the same picture at a glance,
+subsystem by subsystem.
 
 ## How to read this site
 
-Every topic is marked with a difficulty level:
+Background/development topics carry a difficulty level ({{ foundation }}
+{{ intermediate }} {{ advanced }} {{ research }}) and, where a claim is
+about ALeRT's own systems, a verification status ({{ documented }}
+{{ simulation }} {{ hardwareverified }} {{ unverified }} {{ historical }}).
+Safety and Operating pages use the separate plain-text labels described
+above instead. See [Supported environment](reference/compatibility.md)
+for what "documented" assumes about your own setup.
 
-{{ foundation }} foundational &nbsp;
-{{ intermediate }} intermediate &nbsp;
-{{ advanced }} advanced &nbsp;
-{{ research }} research / experimental
+```{toctree}
+:hidden:
+:maxdepth: 1
+:caption: Start Here
 
-and, where a claim is about ALeRT's own systems specifically, a
-verification status:
-
-{{ documented }} confirmed via a repository or written documentation
-&nbsp;
-{{ simulation }} runs in Webots &nbsp;
-{{ hardwareverified }} actually checked on running hardware &nbsp;
-{{ unverified }} plausible, not checked &nbsp;
-{{ historical }} no longer current, kept for context
-
-Safety and Operating pages use a separate, plain-text verification
-label per procedure step (`Verified in code`, `Verified in
-configuration`, `Historical procedure`, `Unverified on hardware`) —
-see [Safety Principles](safety/safety-principles.md#verification-levels).
-
-This site runs on one fixed toolchain — Ubuntu 22.04 LTS and ROS 2
-Humble — unless a specific ALeRT repository is documented to need
-something else. See [Supported environment](reference/compatibility.md)
-for the exact versions and how to check them on your own machine.
+start-here
+```
 
 ```{toctree}
 :hidden:

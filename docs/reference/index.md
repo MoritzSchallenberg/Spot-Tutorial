@@ -29,6 +29,14 @@ Every term used in the site, in plain language, with a link to where it is
 explained properly.
 :::
 
+:::{grid-item-card} System Status
+:link: system-status
+:link-type: doc
+
+A subsystem-by-subsystem status matrix, so "documented" is never
+mistaken for "hardware-verified".
+:::
+
 ::::
 
 ## Quick answers
@@ -57,4 +65,5 @@ explained properly.
 ros2-cheatsheet
 compatibility
 glossary
+system-status
 ```

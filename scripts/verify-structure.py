@@ -501,15 +501,29 @@ def check_new_title() -> list[str]:
 
 
 def check_full_navigation() -> list[str]:
+    """The 11 Section 6 captions must appear, in order, as a (not necessarily
+    contiguous) subsequence of docs/index.md's toctree captions -- allowing
+    a small number of additional entries (e.g. "Start Here", Entwicklungsauftrag
+    10) without requiring an exact full-list match, while still catching a
+    caption being dropped, renamed, or reordered."""
     failures: list[str] = []
     index_md = REPO_ROOT / "docs" / "index.md"
     text = index_md.read_text(encoding="utf-8")
     captions = re.findall(r":caption:\s*(.+)", text)
-    if captions != EXPECTED_NAV_CAPTIONS:
-        failures.append(
-            f"docs/index.md toctree captions {captions} do not match the expected "
-            f"Section 6 navigation {EXPECTED_NAV_CAPTIONS}"
-        )
+
+    search_from = 0
+    for expected in EXPECTED_NAV_CAPTIONS:
+        try:
+            found_at = captions.index(expected, search_from)
+        except ValueError:
+            failures.append(
+                f"docs/index.md toctree captions {captions} are missing or "
+                f"misorder the required Section 6 navigation "
+                f"{EXPECTED_NAV_CAPTIONS} (expected to find {expected!r} at or "
+                f"after position {search_from})"
+            )
+            break
+        search_from = found_at + 1
     return failures
 
 
