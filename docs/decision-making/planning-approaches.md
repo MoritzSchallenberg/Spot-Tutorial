@@ -22,8 +22,16 @@ situations to enumerate by hand.
 ### RAFCON — a graphical state machine tool
 
 {{ alert }} [RAFCON](https://github.com/DLR-RM/RAFCON) is a graphical state
-machine editor and execution engine from DLR, used by the ALeRT team. You
-drag states and draw transitions; each state's body is Python:
+machine editor and execution engine from DLR, used by the ALeRT team in
+its Webots simulation tutorial material. A direct audit of the current
+real-hardware Spot deployment found YASMIN, not RAFCON, driving actual
+missions — see [Autonomous Behaviors](../autonomous-behaviors/index.md)
+and [System Architecture: Software
+Components](../architecture/software-components.md#behaviormission).
+Both are legitimate tools for the same pattern; this subsection teaches
+RAFCON specifically because that is what the tutorial material below
+uses. You drag states and draw transitions; each state's body is
+Python:
 
 ```python
 def execute(self, inputs, outputs, gvm):
