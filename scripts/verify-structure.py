@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """verify-structure.py -- static, source-level checks for the ALeRT Spot
-Tutorial navigation structure introduced by Entwicklungsauftrag 9. Updated
-from the topic-based structure of Entwicklungsauftrag 8, which this script
-originally checked -- that structure's 13 topic directories still exist on
-disk (as "background directories", see BACKGROUND_DIRS below) but are no
-longer top-level navigation sections in their own right.
+Tutorial's current, Spot-centric navigation structure. Updated from an
+earlier topic-based structure this script originally checked -- that
+structure's 13 topic directories still exist on disk (as "background
+directories", see BACKGROUND_DIRS below) but are no longer top-level
+navigation sections in their own right.
 
 Unlike verify-site.py, this needs no build, no server and no browser -- it
 reads the Markdown sources in docs/ directly. Run it any time with:
@@ -13,9 +13,8 @@ reads the Markdown sources in docs/ directly. Run it any time with:
 
 It checks:
 
- 1. exactly 11 public top-level "primary nav" directories exist (the
-    sections in Section 6 of the Entwicklungsauftrag 9 task), no more, no
-    fewer beyond the background directories they transitively reference,
+ 1. exactly 11 public top-level "primary nav" directories exist, no more,
+    no fewer, beyond the background directories they transitively reference,
     and no docs/course/ or docs/prerequisites/ directory exists (the
     pre-migration structure);
  2. every topic directory has an index.md;
@@ -38,9 +37,9 @@ It checks:
     separate prerequisites/getting-started installation page;
  8. no internal link anywhere under docs/ still points at the deleted
     docs/course/ or docs/prerequisites/ paths;
- 9. no Carologistics content remains anywhere (carried over from
-    Entwicklungsauftrag 8's Carologistics-removal commit, still
-    relevant -- a later edit could reintroduce it);
+ 9. no Carologistics content remains anywhere (carried over from an
+    earlier Carologistics-removal commit, still relevant -- a later
+    edit could reintroduce it);
 10. no page under docs/ is named or titled "Instructor";
 11. no video URL (a `grid-item-card` `:link:` on a video page) appears
     more than once across the whole site;
@@ -83,11 +82,11 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DOCS = REPO_ROOT / "docs"
 
-# Entwicklungsauftrag 9 (ALeRT Spot Tutorial pivot) replaced the 13
-# independent topics with the Spot-oriented navigation from the task's
-# Section 6. PRIMARY_NAV_DIRS are the 11 sections with their own top-level
-# toctree caption in docs/index.md, in that order. BACKGROUND_DIRS are the
-# pre-existing topic directories kept at their original path (to avoid
+# The ALeRT Spot Tutorial pivot replaced the 13 independent topics with
+# the current Spot-oriented navigation. PRIMARY_NAV_DIRS are the 11
+# sections with their own top-level toctree caption in docs/index.md, in
+# that order. BACKGROUND_DIRS are the pre-existing topic directories kept
+# at their original path (to avoid
 # rewriting the ~30 cross-references into docs/platforms/spot/index.md
 # alone) and reached transitively through a primary section's own toctree
 # instead of being a primary section themselves -- see
@@ -390,7 +389,7 @@ def check_only_new_substitutions_used() -> list[str]:
 
 
 # ---------------------------------------------------------------------------
-# Entwicklungsauftrag 9 (ALeRT Spot Tutorial pivot) checks, Section 16.
+# ALeRT Spot Tutorial pivot checks.
 # ---------------------------------------------------------------------------
 
 EXPECTED_TITLE = "ALeRT Spot Tutorial"
@@ -501,11 +500,12 @@ def check_new_title() -> list[str]:
 
 
 def check_full_navigation() -> list[str]:
-    """The 11 Section 6 captions must appear, in order, as a (not necessarily
-    contiguous) subsequence of docs/index.md's toctree captions -- allowing
-    a small number of additional entries (e.g. "Start Here", Entwicklungsauftrag
-    10) without requiring an exact full-list match, while still catching a
-    caption being dropped, renamed, or reordered."""
+    """The 11 primary-nav captions must appear, in order, as a (not
+    necessarily contiguous) subsequence of docs/index.md's toctree
+    captions -- allowing a small number of additional entries (e.g.
+    "Start Here", added in a later pass) without requiring an exact
+    full-list match, while still catching a caption being dropped,
+    renamed, or reordered."""
     failures: list[str] = []
     index_md = REPO_ROOT / "docs" / "index.md"
     text = index_md.read_text(encoding="utf-8")
@@ -661,6 +661,109 @@ def check_banned_terms_in_build() -> list[str]:
     return failures
 
 
+_STALE_IDENTITY_PATTERNS = (
+    "Learning-Robotics-Crash-Course",
+    "github.io/Learning-Robotics-Crash-Course",
+    "MoritzSchallenberg/Learning-Robotics-Crash-Course",
+    "/Learning-Robotics-Crash-Course/",
+    "docs/course/",
+    "Entwicklungsauftrag",
+)
+
+# Directories/files this repository actually uses as its own scratch space
+# for a throwaway per-check checkout in a test, or that legitimately still
+# reference retired names/paths as an explicit historical record rather
+# than a live, current claim -- excluded from check_repository_identity()
+# by the task's own instruction (maintainers/archive/, .git/, docs/_build/),
+# plus this script's own _STALE_IDENTITY_PATTERNS/_BANNED_TERMS definitions,
+# which necessarily spell out the exact strings they detect.
+_IDENTITY_SCAN_EXCLUDED_DIRS = ("maintainers/archive", ".git", "docs/_build")
+_IDENTITY_SCAN_FILE_ALLOWLIST = ("scripts/verify-structure.py",)
+
+_IDENTITY_SCAN_ROOTS = (
+    "README.md",
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    "docs",
+    "scripts",
+    ".github",
+    "requirements.txt",
+    "LICENSES.md",
+    "DECISIONS_NEEDED.md",
+)
+
+
+def _identity_scan_files() -> list[Path]:
+    files: list[Path] = []
+    for root_name in _IDENTITY_SCAN_ROOTS:
+        root = REPO_ROOT / root_name
+        if not root.exists():
+            continue
+        candidates = [root] if root.is_file() else list(root.rglob("*"))
+        for p in candidates:
+            if not p.is_file():
+                continue
+            rel = p.relative_to(REPO_ROOT).as_posix()
+            if any(rel.startswith(f"{excluded}/") for excluded in _IDENTITY_SCAN_EXCLUDED_DIRS):
+                continue
+            if rel in _IDENTITY_SCAN_FILE_ALLOWLIST:
+                continue
+            files.append(p)
+    return files
+
+
+def check_repository_identity() -> list[str]:
+    """The repository was renamed from Learning-Robotics-Crash-Course to
+    Spot-Tutorial, and the internal Entwicklungsauftrag task-numbering
+    scheme used during development should never leak into active,
+    reader-facing or maintainer-facing content. Catches a regression --
+    a copy-pasted old link, a stale example path -- before it ships."""
+    failures: list[str] = []
+    for p in _identity_scan_files():
+        try:
+            text = p.read_text(encoding="utf-8", errors="ignore")
+        except OSError:
+            continue
+        rel = p.relative_to(REPO_ROOT).as_posix()
+        for pattern in _STALE_IDENTITY_PATTERNS:
+            if pattern in text:
+                failures.append(f"{rel}: stale reference found: {pattern!r}")
+
+    # Positive assertions: the correct current values are actually present
+    # where it matters most, not just that the wrong ones are absent.
+    conf_py = DOCS / "conf.py"
+    if conf_py.is_file():
+        text = conf_py.read_text(encoding="utf-8")
+        if "https://moritzschallenberg.github.io/Spot-Tutorial/" not in text:
+            failures.append("docs/conf.py: html_baseurl does not point to the current Spot-Tutorial Pages URL")
+
+    index_md = DOCS / "index.md"
+    if index_md.is_file():
+        text = index_md.read_text(encoding="utf-8")
+        if "github.com/MoritzSchallenberg/Spot-Tutorial/issues" not in text:
+            failures.append("docs/index.md: GitHub issue link does not point to MoritzSchallenberg/Spot-Tutorial")
+
+    readme = REPO_ROOT / "README.md"
+    if readme.is_file():
+        text = readme.read_text(encoding="utf-8")
+        if "https://moritzschallenberg.github.io/Spot-Tutorial/" not in text:
+            failures.append("README.md: documentation link does not point to the current Spot-Tutorial Pages URL")
+
+    pages_yml = REPO_ROOT / ".github" / "workflows" / "pages.yml"
+    if pages_yml.is_file():
+        text = pages_yml.read_text(encoding="utf-8")
+        if "Learning-Robotics-Crash-Course" in text or "learning-robotics-crash-course" in text.lower():
+            failures.append(".github/workflows/pages.yml: references the old repository path")
+
+    verify_site_py = REPO_ROOT / "scripts" / "verify-site.py"
+    if verify_site_py.is_file():
+        text = verify_site_py.read_text(encoding="utf-8")
+        if "localhost:8899/Spot-Tutorial" not in text:
+            failures.append("scripts/verify-site.py: default base URL does not use the current /Spot-Tutorial subpath")
+
+    return failures
+
+
 def main() -> int:
     all_failures: list[str] = []
 
@@ -687,6 +790,7 @@ def main() -> int:
     all_failures.extend(check_no_duplicate_video_urls())
     all_failures.extend(check_video_cards_carry_metadata())
     all_failures.extend(check_only_new_substitutions_used())
+    all_failures.extend(check_repository_identity())
 
     print("=== verify-structure.py results ===")
     if all_failures:
