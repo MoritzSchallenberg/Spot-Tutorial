@@ -24,7 +24,7 @@ jobs:
     name: Build and test the example ROS 2 packages
     # Independent of the Sphinx build/deploy below: this never blocks or
     # delays publishing the site, it only checks that the example package(s)
-    # referenced from the course pages actually build under ROS 2 Humble.
+    # referenced from the ROS 2 topic pages actually build under ROS 2 Humble.
     #
     # action-ros-ci does its own checkout of "the code under test" via vcs,
     # and recursively discovers every package.xml in the repository -- no
@@ -77,6 +77,13 @@ jobs:
         # else placed inside it (like a stray .doctrees) is copied straight
         # through to the published site completely unencrypted.
         run: sphinx-build -W --keep-going -d docs/_build/doctrees -b html docs docs/_build/html
+
+      - name: Run structural checks
+        # Source-level checks (navigation completeness, no orphaned pages,
+        # no banned old-repository/old-course terms) that do not need a
+        # browser -- see scripts/verify-structure.py's own docstring for
+        # the full list of what this covers.
+        run: python scripts/verify-structure.py
 
       - name: Check that no secrets reached the output
         # Cheap safety net: the repository is public, and the source material
@@ -190,6 +197,33 @@ jobs:
           else
             echo "No broken links reported."
           fi
+
+      - name: Validate the encrypted artifact before upload
+        # Belt-and-braces check, independent of the specific steps above
+        # that are supposed to prevent each of these: fail the whole job
+        # rather than publish anything if a raw doctree/pickle, an
+        # unencrypted search index, or a published _sources/ directory
+        # (Sphinx's own copy of every page's raw source, another way full
+        # page content can leak past the password gate) is still present
+        # in what is about to be uploaded.
+        run: |
+          set -e
+          if [ -d docs/_build/encrypted/html/_sources ]; then
+            echo "::error::_sources/ is present in the encrypted output -- raw page source would be published unencrypted"
+            exit 1
+          fi
+          if [ -f docs/_build/encrypted/html/searchindex.js ]; then
+            echo "::error::searchindex.js is present in the encrypted output -- the full-text search index would be published unencrypted"
+            exit 1
+          fi
+          leaked_doctree=$(find docs/_build/encrypted/html \
+            \( -name '*.doctree' -o -name 'environment.pickle' \) \
+            -print -quit)
+          if [ -n "$leaked_doctree" ]; then
+            echo "::error::found a doctree/pickle file in the encrypted output ($leaked_doctree) -- full page content would be published unencrypted"
+            exit 1
+          fi
+          echo "OK: no _sources/, no searchindex.js, no doctree/pickle files in the encrypted output"
 
       - name: Upload the Pages artifact
         # Only the deploy job needs the artifact, but uploading on pull
