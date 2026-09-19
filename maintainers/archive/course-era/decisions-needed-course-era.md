@@ -1,4 +1,16 @@
-# Decisions needed
+# Decisions needed (course-era archive)
+
+**Archived, historical record.** This is the repository's original
+`DECISIONS_NEEDED.md` from the general, multi-team "crash course" era
+(Entwicklungsauftrag 8 and earlier), before the site was pivoted to the
+ALeRT Spot-specific tutorial (Entwicklungsauftrag 9). It is kept for
+reference only — several items below reference course sessions,
+hackathon logistics, and platform pages (`platforms/alert-spot.md`,
+`platforms/carologistics-robotino.md`) that no longer exist. The
+repository root's current `DECISIONS_NEEDED.md` lists only the open
+decisions still relevant to the site as it exists today.
+
+---
 
 Organisational and rights-holder decisions that this development pass could
 not reliably make, and should not make on its own. Each is recorded here
