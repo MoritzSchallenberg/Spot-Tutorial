@@ -19,7 +19,7 @@ extensions = [
     "sphinx_copybutton",    # copy button on every code block
     "sphinx_design",        # cards, grids, dropdowns (used for solution blocks)
     "sphinx.ext.todo",
-    "sphinxcontrib.mermaid",  # architecture diagrams (Entwicklungsauftrag 9)
+    "sphinxcontrib.mermaid",  # architecture diagrams
 ]
 
 # Pinned so a future sphinxcontrib-mermaid upgrade cannot silently change the
@@ -79,8 +79,8 @@ myst_substitutions = {
     "alert": _badge("alert", "ALERT"),
     "unverified": _badge("unverified", "UNVERIFIED"),
     # ---------------------------------------------------------------------
-    # Difficulty-level badges (Entwicklungsauftrag 8, replacing the course-
-    # era Core/Optional/Common/Platform-specific scheme). These mark
+    # Difficulty-level badges, replacing an earlier course-era
+    # Core/Optional/Common/Platform-specific scheme. These mark
     # technical difficulty, not schedule priority -- a topic is Foundation
     # because it needs no prior specialised knowledge, not because it is
     # "session 1". Mark every heading or task with exactly one.
@@ -90,17 +90,15 @@ myst_substitutions = {
     "advanced": _level("advanced", "ADVANCED"),
     "research": _level("research", "RESEARCH"),
     # ---------------------------------------------------------------------
-    # "Try it on Spot" safety-level badges (Entwicklungsauftrag 5). Every
-    # Spot exercise scattered across this site's topics is marked with
-    # exactly one of these three, so a reader can tell at a glance whether
-    # it is safe to try alone.
+    # "Try it on Spot" safety-level badges. Every Spot exercise scattered
+    # across this site's topics is marked with exactly one of these three,
+    # so a reader can tell at a glance whether it is safe to try alone.
     # ---------------------------------------------------------------------
     "spotsim": _level("spot-sim", "SIMULATION EXERCISE"),
     "spotreadonly": _level("spot-readonly", "READ-ONLY ON PHYSICAL SPOT"),
     "spotsupervised": _level("spot-supervised", "SUPERVISED PHYSICAL EXERCISE"),
     # ---------------------------------------------------------------------
-    # Team-claim verification badges (Entwicklungsauftrag 6, extended in
-    # Entwicklungsauftrag 8). Every "how ALeRT uses this" statement is
+    # Team-claim verification badges. Every "how ALeRT uses this" statement is
     # marked with exactly one: confirmed by the team's own repository or
     # documentation ({{ documented }}), runnable in Webots
     # ({{ simulation }}, already defined above), actually checked on

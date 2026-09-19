@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
-# tutorial-preflight.sh -- read-only readiness check for the ALeRT Advanced
-# Robotics Tutorial.
+# tutorial-preflight.sh -- read-only readiness check for the ALeRT Spot
+# Tutorial.
 #
 # Run this before starting a topic that needs it, not partway through. It
 # only reads state; it never installs anything, changes configuration,
@@ -54,7 +54,7 @@ if [ -r /etc/os-release ]; then
     esac
 else
     _warn "Could not read /etc/os-release -- are you on Ubuntu?" \
-        "this site assumes Ubuntu 22.04; see docs/course/02-ros2/installation.md"
+        "this site assumes Ubuntu 22.04; see docs/ros2/installation.md"
 fi
 
 # ---------------------------------------------------------------------------
@@ -74,7 +74,7 @@ if have ros2; then
     _pass "the 'ros2' command is available"
 else
     _fail "'ros2' is not on PATH" \
-        "ROS 2 is not sourced in this terminal -- see docs/course/02-ros2/installation.md"
+        "ROS 2 is not sourced in this terminal -- see docs/ros2/installation.md"
 fi
 
 if have ros2; then
@@ -105,7 +105,14 @@ fi
 
 section "Workspace"
 
-WORKSPACE_CANDIDATES=("$HOME/course_ws" "$HOME/robot_ws" "$HOME/ros2_ws")
+# ~/robot_ws is the name docs/ros2/installation.md and the other general
+# topics actually instruct a reader to create and build (checked, not
+# assumed -- see the mkdir/colcon commands there). ~/ros2_ws is kept as a
+# generic fallback for a reader who set up ROS 2 before finding this site.
+# Neither refers to any of the team's own real Spot workspaces (spot_ws,
+# man_ws, etc. -- see docs/architecture/), which this preflight check has
+# no reason to look for.
+WORKSPACE_CANDIDATES=("$HOME/robot_ws" "$HOME/ros2_ws")
 FOUND_WS=""
 for ws in "${WORKSPACE_CANDIDATES[@]}"; do
     if [ -d "$ws/install" ]; then
@@ -122,8 +129,8 @@ if [ -n "$FOUND_WS" ]; then
         _warn "no install/setup.bash in ${FOUND_WS}" "run 'colcon build' in that workspace"
     fi
 else
-    _warn "no built workspace found at ~/course_ws, ~/robot_ws or ~/ros2_ws" \
-        "create one: mkdir -p ~/course_ws/src && cd ~/course_ws && colcon build"
+    _warn "no built workspace found at ~/robot_ws or ~/ros2_ws" \
+        "create one: mkdir -p ~/robot_ws/src && cd ~/robot_ws && colcon build"
 fi
 
 # ---------------------------------------------------------------------------
@@ -151,7 +158,7 @@ elif [ -d "/usr/local/webots" ] || [ -d "/opt/webots" ]; then
     _pass "a Webots installation directory was found"
 else
     _warn "Webots was not found" \
-        "only relevant if your topic uses simulation -- see docs/platforms/simulation.md"
+        "only relevant if your topic uses simulation -- see docs/simulation/index.md"
 fi
 
 if have ros2 && timeout 5 ros2 pkg prefix webots_ros2 >/dev/null 2>&1; then
@@ -209,7 +216,7 @@ echo "=================================================="
 if [ "$FAIL" -gt 0 ]; then
     echo
     echo "Resolve every FAIL above before continuing -- each one names the"
-    echo "exact next step. See docs/course/02-ros2/installation.md for the"
+    echo "exact next step. See docs/ros2/installation.md for the"
     echo "full installation guide."
     exit 1
 fi
